@@ -2,121 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loadmaster Pro: Winching</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loadmaster Pro: Restraint + Load Shift + Winching</title>
   <style>
-    body {
-      background-color: #121212;
-      color: #e0e0e0;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 1rem;
+    :root {
+      --highlight-color: #3e8eaa;
+      --bg-color: #121212;
+      --primary-color: #1f6f8b;
+      --accent-color: #99e1d9;
+      --text-color: #e0e0e0;
+      --card-color: #1e1e1e;
     }
-    label {
-      margin-top: 1rem;
-      display: block;
-      font-weight: 500;
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 1rem;
     }
     select, input, button {
       width: 100%;
       padding: 0.75rem;
-      margin-top: 0.25rem;
-      margin-bottom: 1rem;
+      margin-top: 0.5rem;
       border-radius: 8px;
       border: 1px solid #444;
-      background-color: #1e1e1e;
-      color: #fff;
       font-size: 1rem;
+      background-color: #2a2a2a;
+      color: var(--text-color);
+      box-sizing: border-box;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
     }
     button {
-      background-color: #1f6f8b;
+      background-color: var(--primary-color);
+      color: #fff;
       font-weight: bold;
-      transition: 0.3s;
+      transition: background-color 0.3s ease;
     }
     button:hover {
-      background-color: #3e8eaa;
+      background-color: var(--highlight-color);
     }
-    #result {
+    #result, #loadShiftResult, #winchResult {
       margin-top: 1rem;
       padding: 1rem;
-      background-color: #1e1e1e;
-      border-left: 4px solid #99e1d9;
+      background-color: var(--card-color);
+      border-left: 4px solid var(--primary-color);
       border-radius: 8px;
-      font-weight: bold;
       white-space: pre-line;
+      font-weight: bold;
+    }
+    .toggle-button {
+      margin-top: 1rem;
+      background-color: #2a2a2a;
+      border: 2px solid var(--accent-color);
+      color: white;
+    }
+    .toggle-button.active {
+      background-color: var(--accent-color);
+      color: black;
     }
   </style>
 </head>
 <body>
-  <h1>Loadmaster Pro: Winching</h1>
-  <label for="surfaceType">Surface Type:</label>
-  <select id="surfaceType">
-    <option value="Pneumatic Tires">Pneumatic Tires</option>
-    <option value="Tracks">Tracks</option>
-    <option value="Steel/Hard Rubber Wheels">Steel/Hard Rubber Wheels</option>
-    <option value="Roller Conveyors">Roller Conveyors</option>
-    <option value="Greased Shoring">Greased Shoring</option>
-    <option value="Dry Shoring">Dry Shoring</option>
-    <option value="Skids on Non-Skid">Skids on Non-Skid</option>
-    <option value="Non-Skid Surface">Non-Skid Surface</option>
-  </select>
+  <!-- Restraint Module Here -->
 
-  <label for="rampAngle">Ramp Angle:</label>
-  <select id="rampAngle">
+  <!-- Load Shift Module Here -->
+
+  <hr style="margin: 2rem 0; border-color: #444;" />
+  <h2>Winching Calculator</h2>
+  <label for="winchWeight">Cargo Weight (lbs):</label>
+  <input type="number" id="winchWeight" placeholder="e.g., 22000" />
+
+  <label for="winchRamp">Ramp Angle:</label>
+  <select id="winchRamp">
     <option value="0">Level Ramp (0°)</option>
     <option value="3.8">Long ADS with Plugs (3.8°)</option>
     <option value="5">Long ADS Only (5°)</option>
     <option value="15">Normal Ramp / Toes Down (15°)</option>
   </select>
 
-  <label for="cargoWeight">Cargo Weight (lbs):</label>
-  <input type="number" id="cargoWeight" placeholder="e.g., 15000" />
+  <label for="winchSurface">Surface Type:</label>
+  <select id="winchSurface">
+    <option value="pneumatic">Pneumatic Tires</option>
+    <option value="tracks">Tracks</option>
+    <option value="steel">Steel/Hard Rubber Wheels</option>
+    <option value="roller">Roller Conveyors</option>
+    <option value="greased">Greased Shoring</option>
+    <option value="dry">Dry Shoring</option>
+    <option value="skids">Skids on Non-Skid</option>
+    <option value="nonskid">Non-Skid Surface</option>
+  </select>
 
-  <button onclick="calculateWinching()">Calculate Winching Limit</button>
-  <div id="result"></div>
+  <button onclick="calculateWinching()">Calculate Required Snatch Blocks</button>
+  <div id="winchResult"></div>
 
   <script>
-    const winchData = {
-      "Pneumatic Tires":     [250000, 60038, 49281, 20000],
-      "Tracks":              [93750, 51426, 44996, 22303],
-      "Steel/Hard Rubber Wheels": [416667, 58358, 46699, 17729],
-      "Roller Conveyors":    [375000, 87250, 70146, 26947],
-      "Greased Shoring":     [28846, 23043, 21679, 14701],
-      "Dry Shoring":         [15306, 13513, 13043, 10241],
-      "Skids on Non-Skid":   [9202, 8529, 8345, 7168],
-      "Non-Skid Surface":    [7500, 7049, 6925, 6122]
-    };
-
-    const rampMap = {
-      "0": 0,
-      "3.8": 1,
-      "5": 2,
-      "15": 3
-    };
-
     function calculateWinching() {
-      const surface = document.getElementById("surfaceType").value;
-      const angle = document.getElementById("rampAngle").value;
-      const weight = parseFloat(document.getElementById("cargoWeight").value);
-      const resultEl = document.getElementById("result");
+      const weight = parseFloat(document.getElementById("winchWeight").value);
+      const angle = parseFloat(document.getElementById("winchRamp").value);
+      const surface = document.getElementById("winchSurface").value;
 
-      if (!surface || !angle || isNaN(weight) || weight <= 0) {
-        resultEl.innerText = "⚠️ Please enter valid input values.";
+      if (isNaN(weight)) {
+        document.getElementById("winchResult").innerText = "Please enter a valid cargo weight.";
         return;
       }
 
-      const limits = winchData[surface];
-      const index = rampMap[angle];
-      const maxAllowable = limits[index];
+      const maxWeights = {
+        pneumatic: [250000, 60038, 49281, 20000],
+        tracks: [93750, 51426, 44996, 22303],
+        steel: [416667, 58358, 46699, 17729],
+        roller: [375000, 87250, 70146, 26947],
+        greased: [28846, 23043, 21679, 14701],
+        dry: [15306, 13513, 13043, 10241],
+        skids: [9202, 8529, 8345, 7168],
+        nonskid: [7500, 7049, 6925, 6122]
+      };
 
-      const resultText = 
-`Surface Type: ${surface}
-Ramp Angle: ${document.getElementById("rampAngle").selectedOptions[0].text}
-Cargo Weight: ${weight.toLocaleString()} lbs
-Max Allowable (1 Line Pull): ${maxAllowable.toLocaleString()} lbs
+      const rampIndexMap = {
+        "0": 0,
+        "3.8": 1,
+        "5": 2,
+        "15": 3
+      };
 
-${weight <= maxAllowable ? "✅ Within Limits" : "❌ Exceeds Limits – Use Additional Lines or Reconfigure"}`;
+      const index = rampIndexMap[angle.toString()];
+      const allowed = maxWeights[surface][index];
 
-      resultEl.innerText = resultText;
+      const lines = Math.ceil(weight / allowed);
+      const snatchBlocks = Math.min(lines - 1, 4);
+      const totalLines = Math.min(lines, 5);
+
+      document.getElementById("winchResult").innerText =
+        `Surface: ${document.getElementById("winchSurface").selectedOptions[0].text}\n` +
+        `Ramp: ${document.getElementById("winchRamp").selectedOptions[0].text}\n` +
+        `Max Single Line Capacity: ${allowed.toLocaleString()} lbs\n` +
+        `Required Snatch Blocks: ${snatchBlocks} (for ${totalLines}-line winch)`;
     }
   </script>
 </body>
