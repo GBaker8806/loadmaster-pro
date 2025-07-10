@@ -1,1 +1,107 @@
-<html><body><h1>> 100 PSI Tires Module</h1></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loadmaster Pro: >100 PSI Tires</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.25rem;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background-color: #1e1e1e;
+      color: #fff;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #1f6f8b;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #3e8eaa;
+    }
+    #result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #1e1e1e;
+      border-left: 4px solid #99e1d9;
+      border-radius: 8px;
+      white-space: pre-line;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Loadmaster Pro: >100 PSI Tires</h1>
+
+  <label for="footprintLength">Tire Footprint Length (in):</label>
+  <input type="number" id="footprintLength" placeholder="e.g., 13" />
+
+  <label for="footprintWidth">Tire Footprint Width (in):</label>
+  <input type="number" id="footprintWidth" placeholder="e.g., 8" />
+
+  <label for="axleWeight">Axle Weight (lbs):</label>
+  <input type="number" id="axleWeight" placeholder="e.g., 15600" />
+
+  <button onclick="calculateTireValues()">Calculate</button>
+  <div id="result"></div>
+
+  <script>
+    function roundUp(val) {
+      return Math.ceil(val);
+    }
+
+    function calculateTireValues() {
+      const L = parseFloat(document.getElementById('footprintLength').value);
+      const W = parseFloat(document.getElementById('footprintWidth').value);
+      const axleWeight = parseFloat(document.getElementById('axleWeight').value);
+      const result = document.getElementById('result');
+
+      if (isNaN(L) || isNaN(W) || isNaN(axleWeight) || L <= 0 || W <= 0 || axleWeight <= 0) {
+        result.innerText = "⚠️ Please enter valid, positive values for all fields.";
+        return;
+      }
+
+      const wheelWeight = roundUp(axleWeight / 2);
+      const contactArea = roundUp(L * W);
+      const psi = roundUp(wheelWeight / contactArea);
+      const piw = roundUp(wheelWeight / W);
+
+      const maxPIWFlight = 840;
+      const maxPIWLoad = 1186;
+
+      let status = "";
+      if (piw <= maxPIWFlight) {
+        status = "✅ PIW is within in-flight limits.";
+      } else if (piw <= maxPIWLoad) {
+        status = "⚠️ PIW exceeds in-flight limits but is OK for on/offload.";
+      } else {
+        status = "❌ PIW exceeds both in-flight and on/offload limits.";
+      }
+
+      result.innerText =
+`Wheel Weight: ${wheelWeight} lbs
+Contact Area: ${contactArea} sq in
+Tire Contact PSI: ${psi}
+PIW (lbs/in): ${piw}
+
+${status}`;
+    }
+  </script>
+</body>
+</html>
