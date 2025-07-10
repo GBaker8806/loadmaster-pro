@@ -1,26 +1,136 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loadmaster Pro</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#121212">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <style>
-    body { background-color: #121212; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; padding: 1rem; }
-    h1 { text-align: center; color: #99e1d9; }
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 1rem;
+    }
+    .module-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #444;
+      border-radius: 16px;
+      padding: 1rem;
+      background-color: #1e1e1e;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+    .module-icon:hover {
+      background-color: #2a2a2a;
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #99e1d9;
+    }
+    .icon-label {
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+    .module-content {
+      margin-top: 2rem;
+      border-top: 1px solid #444;
+      padding-top: 1rem;
+    }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
   <h1>Loadmaster Pro</h1>
-  <p>Welcome to Loadmaster Pro App!</p>
+  <div class="icon-grid">
+    <div class="module-icon" onclick="showModule('restraint')">
+      <div style="font-size: 2rem">🔗</div>
+      <div class="icon-label">Restraint</div>
+    </div>
+    <div class="module-icon" onclick="showModule('loadshift')">
+      <div style="font-size: 2rem">📦</div>
+      <div class="icon-label">Load Shift</div>
+    </div>
+    <div class="module-icon" onclick="showModule('winching')">
+      <div style="font-size: 2rem">🧲</div>
+      <div class="icon-label">Winching</div>
+    </div>
+    <div class="module-icon" onclick="showModule('psi')">
+      <div style="font-size: 2rem">🚙</div>
+      <div class="icon-label">&gt; 100 PSI Tires</div>
+    </div>
+    <div class="module-icon" onclick="showModule('vehiclecg')">
+      <div style="font-size: 2rem">🚚</div>
+      <div class="icon-label">Vehicle CG</div>
+    </div>
+    <div class="module-icon" onclick="showModule('weightbalance')">
+      <div style="font-size: 2rem">⚖️</div>
+      <div class="icon-label">W&B + MAC</div>
+    </div>
+    <div class="module-icon" onclick="showModule('sleeper')">
+      <div style="font-size: 2rem">🛏️</div>
+      <div class="icon-label">Sleeper Shoring</div>
+    </div>
+    <div class="module-icon" onclick="showModule('approach')">
+      <div style="font-size: 2rem">🪜</div>
+      <div class="icon-label">Approach Shoring</div>
+    </div>
+  </div>
+
+  <div id="modules">
+    <div id="restraint" class="module-content hidden">
+      <h2>Restraint Module</h2>
+      <iframe src="modules/restraint.html" width="100%" height="800" frameborder="0" style="background:#1e1e1e;"></iframe>
+    </div>
+    <div id="loadshift" class="module-content hidden">
+      <h2>Load Shift Module</h2>
+      <iframe src="modules/loadshift.html" width="100%" height="800" frameborder="0" style="background:#1e1e1e;"></iframe>
+    </div>
+    <div id="winching" class="module-content hidden">
+      <h2>Winching Module</h2>
+      <iframe src="modules/winching.html" width="100%" height="800" frameborder="0" style="background:#1e1e1e;"></iframe>
+    </div>
+    <div id="psi" class="module-content hidden">
+      <h2>&gt; 100 PSI Tires Module</h2>
+      <iframe src="modules/psi.html" width="100%" height="800" frameborder="0" style="background:#1e1e1e;"></iframe>
+    </div>
+    <div id="vehiclecg" class="module-content hidden">
+      <h2>Vehicle CG Module</h2>
+      <iframe src="modules/vehiclecg.html" width="100%" height="800" frameborder="0" style="background:#1e1e1e;"></iframe>
+    </div>
+    <div id="weightbalance" class="module-content hidden">
+      <h2>Weight & Balance Module</h2>
+      <iframe src="modules/weightbalance.html" width="100%" height="800" frameborder="0" style="background:#1e1e1e;"></iframe>
+    </div>
+    <div id="sleeper" class="module-content hidden">
+      <h2>Sleeper Shoring Module</h2>
+      <iframe src="modules/sleeper.html" width="100%" height="800" frameborder="0" style="background:#1e1e1e;"></iframe>
+    </div>
+    <div id="approach" class="module-content hidden">
+      <h2>Approach Shoring Module</h2>
+      <iframe src="modules/approach.html" width="100%" height="800" frameborder="0" style="background:#1e1e1e;"></iframe>
+    </div>
+  </div>
+
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log("Service Worker registered successfully."))
-        .catch(error => console.error("Service Worker registration failed:", error));
+    function showModule(name) {
+      document.querySelectorAll('.module-content').forEach(el => el.classList.add('hidden'));
+      const selected = document.getElementById(name);
+      if (selected) {
+        selected.classList.remove('hidden');
+        window.scrollTo({ top: selected.offsetTop, behavior: 'smooth' });
+      }
     }
   </script>
 </body>
