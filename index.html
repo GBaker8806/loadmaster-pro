@@ -2,48 +2,126 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loadmaster Pro</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --highlight-color-light: #7aa2f7;
+      --bg-color-light: #f5f6fa;
+      --primary-color-light: #3b4252;
+      --accent-color-light: #88c0d0;
+      --text-color-light: #2e3440;
+      --card-color-light: #e5e9f0;
+
+      --highlight-color-dark: #7aa2f7;
+      --bg-color-dark: #121212;
+      --primary-color-dark: #1f1f1f;
+      --accent-color-dark: #88c0d0;
+      --text-color-dark: #e0e0e0;
+      --card-color-dark: #1e1e1e;
+    }
+
+    body.light {
+      --highlight-color: var(--highlight-color-light);
+      --bg-color: var(--bg-color-light);
+      --primary-color: var(--primary-color-light);
+      --accent-color: var(--accent-color-light);
+      --text-color: var(--text-color-light);
+      --card-color: var(--card-color-light);
+    }
+
+    body.dark {
+      --highlight-color: var(--highlight-color-dark);
+      --bg-color: var(--bg-color-dark);
+      --primary-color: var(--primary-color-dark);
+      --accent-color: var(--accent-color-dark);
+      --text-color: var(--text-color-dark);
+      --card-color: var(--card-color-dark);
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .module-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--card-color);
+      border-radius: 16px;
+      padding: 1rem;
+      background-color: var(--card-color);
+      transition: background-color 0.2s ease, border 0.2s ease;
+      cursor: pointer;
+    }
+    .module-icon:hover {
+      background-color: var(--highlight-color);
+      color: #fff;
+    }
+    .module-icon:hover div {
+      filter: brightness(120%);
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .theme-toggle {
+      margin-bottom: 1rem;
+      float: right;
+      padding: 0.4rem 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body class="light">
-  <button onclick="toggleTheme()">🌗 Toggle Theme</button>
-
-  <div id="homeScreen">
-    <h1>Loadmaster Pro</h1>
-    <div class="icon-grid">
-      <div class="module-icon" onclick="loadModule('restraint')">🔗 Restraint</div>
-      <div class="module-icon" onclick="loadModule('loadshift')">📦 Load Shift</div>
-      <div class="module-icon" onclick="loadModule('winching')">🧲 Winching</div>
-      <div class="module-icon" onclick="loadModule('psi')">🚙 >100 PSI Tires</div>
-      <div class="module-icon" onclick="loadModule('sleeper')">🛏️ Sleeper Shoring</div>
-      <div class="module-icon" onclick="loadModule('approach')">🛬 Approach Shoring</div>
+  <button class="theme-toggle" onclick="toggleTheme()">🌗 Toggle Theme</button>
+  <h1>Loadmaster Pro</h1>
+  <div class="icon-grid">
+    <div class="module-icon" onclick="navigate('modules/restraint.html')">
+      <div style="font-size: 2rem">🔗</div>
+      <div class="icon-label">Restraint</div>
+    </div>
+    <div class="module-icon" onclick="navigate('modules/loadshift.html')">
+      <div style="font-size: 2rem">📦</div>
+      <div class="icon-label">Load Shift</div>
+    </div>
+    <div class="module-icon" onclick="navigate('modules/winching.html')">
+      <div style="font-size: 2rem">🧲</div>
+      <div class="icon-label">Winching</div>
+    </div>
+    <div class="module-icon" onclick="navigate('modules/psi.html')">
+      <div style="font-size: 2rem">🚙</div>
+      <div class="icon-label">> 100 PSI Tires</div>
+    </div>
+    <div class="module-icon" onclick="navigate('modules/vehiclecg.html')">
+      <div style="font-size: 2rem">🚚</div>
+      <div class="icon-label">Vehicle CG</div>
+    </div>
+    <div class="module-icon" onclick="navigate('modules/sleeper.html')">
+      <div style="font-size: 2rem">🛏️</div>
+      <div class="icon-label">Sleeper Shoring</div>
+    </div>
+    <div class="module-icon" onclick="navigate('modules/approach.html')">
+      <div style="font-size: 2rem">📐</div>
+      <div class="icon-label">Approach Shoring</div>
     </div>
   </div>
 
-  <div id="moduleContainer" class="hidden"></div>
-
   <script>
-    function loadModule(name) {
-      fetch(`modules/${name}.html`)
-        .then(res => res.text())
-        .then(html => {
-          document.getElementById("homeScreen").classList.add("hidden");
-          const container = document.getElementById("moduleContainer");
-          container.innerHTML = `<button onclick="goHome()">🏠 Home</button>` + html;
-          container.classList.remove("hidden");
-        });
-    }
-
-    function goHome() {
-      document.getElementById("moduleContainer").innerHTML = "";
-      document.getElementById("moduleContainer").classList.add("hidden");
-      document.getElementById("homeScreen").classList.remove("hidden");
-    }
-
     function toggleTheme() {
-      document.body.classList.toggle("dark");
-      document.body.classList.toggle("light");
+      document.body.classList.toggle('light');
+      document.body.classList.toggle('dark');
+    }
+
+    function navigate(path) {
+      window.location.href = path;
     }
   </script>
 </body>
