@@ -3,228 +3,255 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loadmaster Pro: Restraint</title>
+  <title>Loadmaster Pro</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
   <style>
-    :root {
-      --highlight-color: #3e8eaa;
-      --bg-color: #121212;
-      --primary-color: #1f6f8b;
-      --accent-color: #99e1d9;
-      --text-color: #e0e0e0;
-      --card-color: #1e1e1e;
-    }
     body {
+      background-color: #121212;
+      color: #e0e0e0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
       padding: 1rem;
     }
-    select, input, button {
-      width: 100%;
-      padding: 0.75rem;
+    .module-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #444;
+      border-radius: 16px;
+      padding: 1rem;
+      background-color: #1e1e1e;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+    }
+    .module-icon:hover {
+      background-color: #2a2a2a;
+    }
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    h1 {
+      text-align: center;
+      color: #99e1d9;
+    }
+    .icon-label {
       margin-top: 0.5rem;
-      border-radius: 8px;
-      border: 1px solid #444;
-      font-size: 1rem;
-      background-color: #2a2a2a;
-      color: var(--text-color);
-      box-sizing: border-box;
+      text-align: center;
     }
-    label {
-      display: block;
-      margin-top: 1rem;
-      margin-bottom: 0.25rem;
-      font-weight: 500;
+    .module-content {
+      margin-top: 2rem;
+      border-top: 1px solid #444;
+      padding-top: 1rem;
     }
-    button {
-      background-color: var(--primary-color);
-      color: #fff;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: var(--highlight-color);
-    }
-    #result, #loadShiftResult {
-      margin-top: 1rem;
-      padding: 1rem;
-      background-color: var(--card-color);
-      border-left: 4px solid var(--primary-color);
-      border-radius: 8px;
-      white-space: pre-line;
-      font-weight: bold;
-    }
-    .toggle-button {
-      margin-top: 1rem;
-      background-color: #2a2a2a;
-      border: 2px solid var(--accent-color);
-      color: white;
-    }
-    .toggle-button.active {
-      background-color: var(--accent-color);
-      color: black;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>Loadmaster Pro: Restraint</h1>
-  <label for="cargoWeight">Cargo Weight (lbs):</label>
-  <input type="number" id="cargoWeight" placeholder="e.g., 12000" />
-  <button onclick="calculateRestraint()">Calculate Required Restraint</button>
-  <div id="result"></div>
-  <hr style="margin: 2rem 0; border-color: #444;" />
-  <h2>Actual Restraint Calculator</h2>
-  <label for="restraintDirection">Direction:</label>
-  <select id="restraintDirection">
-    <option value="FWD">FWD</option>
-    <option value="AFT">AFT</option>
-    <option value="LAT-LEFT">LAT-LEFT</option>
-    <option value="LAT-RIGHT">LAT-RIGHT</option>
-    <option value="VERT">VERT</option>
-  </select>
-  <label for="actualLength">Actual Length (in):</label>
-  <input type="number" id="actualLength" placeholder="e.g., 100" />
-  <label for="effectiveLength">Effective Length (in):</label>
-  <input type="number" id="effectiveLength" placeholder="e.g., 80" />
-  <label for="restraintFactor">Restraint Factor:</label>
-  <select id="restraintFactor">
-    <option value="5000">5,000 lbs</option>
-    <option value="10000" selected>10,000 lbs</option>
-    <option value="25000">25,000 lbs</option>
-  </select>
-  <button id="multiplierToggle" class="toggle-button" onclick="toggleMultiplier()">×2 OFF</button>
-  <button onclick="calculateActualRestraint()">Calculate Actual Restraint</button>
-  <button onclick="undoLast()">Undo Last</button>
+  <h1>Loadmaster Pro</h1>
+  <div class="icon-grid">
+    <div class="module-icon" onclick="showModule('restraint')">
+      <div style="font-size: 2rem">🔗</div>
+      <div class="icon-label">Restraint</div>
+    </div>
+    <div class="module-icon" onclick="showModule('loadshift')">
+      <div style="font-size: 2rem">📦</div>
+      <div class="icon-label">Load Shift</div>
+    </div>
+    <div class="module-icon" onclick="showModule('winching')">
+      <div style="font-size: 2rem">🧲</div>
+      <div class="icon-label">Winching</div>
+    </div>
+    <div class="module-icon" onclick="showModule('psi')">
+      <div style="font-size: 2rem">📏</div>
+      <div class="icon-label">PSI/Shoring</div>
+    </div>
+    <div class="module-icon" onclick="showModule('vehiclecg')">
+      <div style="font-size: 2rem">🚚</div>
+      <div class="icon-label">Vehicle CG</div>
+    </div>
+    <div class="module-icon" onclick="showModule('weightbalance')">
+      <div style="font-size: 2rem">⚖️</div>
+      <div class="icon-label">W&B + MAC</div>
+    </div>
+  </div>
 
-  <hr style="margin: 2rem 0; border-color: #444;" />
-  <h2>Load Shift Calculator</h2>
-  <label for="loadShiftTarget">What do you want to calculate?</label>
-  <select id="loadShiftTarget" onchange="updateLoadShiftFields()">
-    <option value="cgChange">CG Change (in)</option>
-    <option value="shiftArm">Shift Arm (in)</option>
-    <option value="shiftWeight">Shifted Weight (lbs)</option>
-    <option value="grossWeight">Gross Aircraft Weight (lbs)</option>
-  </select>
+  <div id="restraint" class="module-content hidden">
+  <h2>Restraint Module</h2>
+  <div class="mb-3">
+    <label for="restraintWeight" class="form-label">Cargo Weight (lbs)</label>
+    <input type="number" id="restraintWeight" class="form-control" />
+  </div>
+  <button class="btn btn-primary mb-3" onclick="calculateRequiredRestraint()">Calculate Required Restraint</button>
+  <div id="requiredRestraintResult" class="mb-3"></div>
 
-  <div id="loadShiftFields"></div>
+  <div id="actualRestraintSection" style="display:none">
+    <div class="mb-3">
+      <label for="restraintDirection" class="form-label">Direction</label>
+      <select id="restraintDirection" class="form-select">
+        <option value="FWD">Forward</option>
+        <option value="AFT">Aft</option>
+        <option value="LEFT">Left (Lateral)</option>
+        <option value="RIGHT">Right (Lateral)</option>
+        <option value="VERT">Vertical</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="actualLength" class="form-label">Actual Length (in)</label>
+      <input type="number" id="actualLength" class="form-control" />
+    </div>
+    <div class="mb-3">
+      <label for="effectiveLength" class="form-label">Effective Length (in)</label>
+      <input type="number" id="effectiveLength" class="form-control" />
+    </div>
+    <div class="mb-3">
+      <label for="restraintFactor" class="form-label">Restraint Factor</label>
+      <select id="restraintFactor" class="form-select">
+        <option value="5000">5,000</option>
+        <option value="10000" selected>10,000</option>
+        <option value="25000">25,000</option>
+      </select>
+    </div>
+    <div class="mb-3 text-center">
+      <button id="toggleDouble" class="btn btn-outline-info" onclick="toggleMultiplier(this)">Multiply by 2: OFF</button>
+    </div>
+    <button class="btn btn-success mb-3" onclick="calculateActualRestraint()">Add Restraint</button>
+    <button class="btn btn-danger mb-3" onclick="undoLastRestraint()">Undo Last</button>
+    <button class="btn btn-secondary mb-3" onclick="clearAllRestraint()">Clear All</button>
+
+    <div id="actualRestraintTotals" class="mt-3"></div>
+  </div>
+</div>
+<script>
+  let restraintTotals = { FWD: 0, AFT: 0, LEFT: 0, RIGHT: 0, VERT: 0 };
+  let restraintHistory = [];
+  let multiplier = 1;
+
+  function calculateRequiredRestraint() {
+    const weight = parseFloat(document.getElementById('restraintWeight').value);
+    if (isNaN(weight)) return;
+    const gForces = { FWD: 3.0, AFT: 1.5, LEFT: 1.5, RIGHT: 1.5, VERT: 2.0 };
+    let output = `<strong>Required Restraint:</strong><br/>`;
+    const lat = Math.round(weight * gForces.LEFT); // LEFT and RIGHT use same factor
+    output += `FWD: ${Math.round(weight * gForces.FWD)} lbs<br/>`;
+    output += `AFT: ${Math.round(weight * gForces.AFT)} lbs<br/>`;
+    output += `LAT: ${lat} lbs<br/>`;
+    output += `VERT: ${Math.round(weight * gForces.VERT)} lbs<br/>`;
+    document.getElementById('requiredRestraintResult').innerHTML = output;
+    document.getElementById('actualRestraintSection').style.display = 'block';
+  }
+
+  function toggleMultiplier(btn) {
+    multiplier = multiplier === 1 ? 2 : 1;
+    btn.innerText = `Multiply by 2: ${multiplier === 2 ? 'ON' : 'OFF'}`;
+  }
+
+  function calculateActualRestraint() {
+    const actual = parseFloat(document.getElementById('actualLength').value);
+    const effective = parseFloat(document.getElementById('effectiveLength').value);
+    const factor = parseFloat(document.getElementById('restraintFactor').value);
+    const direction = document.getElementById('restraintDirection').value;
+    if (isNaN(actual) || isNaN(effective) || actual === 0) return;
+    let result = (effective / actual) * factor * multiplier;
+    result = Math.round(result);
+    restraintTotals[direction] += result;
+    restraintHistory.push({ direction, value: result });
+    updateRestraintTotals();
+  }
+
+  function undoLastRestraint() {
+    const last = restraintHistory.pop();
+    if (last) {
+      restraintTotals[last.direction] -= last.value;
+      updateRestraintTotals();
+    }
+  }
+
+  function clearAllRestraint() {
+    restraintTotals = { FWD: 0, AFT: 0, LEFT: 0, RIGHT: 0, VERT: 0 };
+    restraintHistory = [];
+    updateRestraintTotals();
+  }
+
+  function updateRestraintTotals() {
+    const display = Object.entries(restraintTotals).map(([dir, val]) => `${dir}: ${val} lbs`).join('<br/>');
+    document.getElementById('actualRestraintTotals').innerHTML = `<strong>Current Actual Totals:</strong><br/>${display}`;
+  }
+</script>
+  <div id="loadshift" class="module-content hidden">
+  <h2>Load Shift Module</h2>
+  <div class="mb-3">
+    <label for="shiftArm" class="form-label">Load Shift Arm (in)</label>
+    <input type="number" id="shiftArm" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label for="shiftWeight" class="form-label">Load Shift Weight (lbs)</label>
+    <input type="number" id="shiftWeight" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label for="shiftGross" class="form-label">Aircraft Gross Weight (lbs)</label>
+    <input type="number" id="shiftGross" class="form-control" />
+  </div>
+  <div class="mb-3">
+    <label for="cgChange" class="form-label">CG Change (in)</label>
+    <input type="number" id="cgChange" class="form-control" />
+  </div>
+  <button class="btn btn-primary mb-3" onclick="calculateLoadShift()">Calculate</button>
   <div id="loadShiftResult"></div>
+</div>
+<script>
+  function calculateLoadShift() {
+    const shiftArm = parseFloat(document.getElementById('shiftArm').value);
+    const shiftWeight = parseFloat(document.getElementById('shiftWeight').value);
+    const shiftGross = parseFloat(document.getElementById('shiftGross').value);
+    const cgChange = parseFloat(document.getElementById('cgChange').value);
+
+    const inputs = [shiftArm, shiftWeight, shiftGross, cgChange];
+    const missing = inputs.filter(v => isNaN(v));
+    let result = '';
+
+    if (missing.length !== 1) {
+      result = 'Please leave exactly one field blank to solve for it.';
+    } else if (isNaN(shiftArm)) {
+      result = `Shift Arm = ${(cgChange * shiftGross / shiftWeight).toFixed(1)} in`;
+    } else if (isNaN(shiftWeight)) {
+      result = `Shift Weight = ${(cgChange * shiftGross / shiftArm).toFixed(1)} lbs`;
+    } else if (isNaN(shiftGross)) {
+      result = `Gross Weight = ${(cgChange * shiftWeight / shiftArm).toFixed(1)} lbs`;
+    } else if (isNaN(cgChange)) {
+      result = `CG Change = ${(shiftArm * shiftWeight / shiftGross).toFixed(1)} in`;
+    }
+
+    document.getElementById('loadShiftResult').innerText = result;
+  }
+</script>
+  <div id="winching" class="module-content hidden">
+    <h2>Winching Module</h2>
+    <p>🔧 Embedded Winching calculator will go here.</p>
+  </div>
+  <div id="psi" class="module-content hidden">
+    <h2>PSI/Shoring Module</h2>
+    <p>🔧 Embedded PSI/Shoring calculator will go here.</p>
+  </div>
+  <div id="vehiclecg" class="module-content hidden">
+    <h2>Vehicle CG Module</h2>
+    <p>🔧 Embedded Vehicle CG calculator will go here.</p>
+  </div>
+  <div id="weightbalance" class="module-content hidden">
+    <h2>Weight & Balance Module</h2>
+    <p>🔧 Embedded W&B and MAC calculator will go here.</p>
+  </div>
 
   <script>
-    let requiredText = "";
-    let requiredRestraint = {};
-    let totalRestraint = {
-      FWD: 0,
-      AFT: 0,
-      "LAT-LEFT": 0,
-      "LAT-RIGHT": 0,
-      VERT: 0
-    };
-    let lastAddition = null;
-    let doubleMultiplier = false;
-
-    function displayTotals(result) {
-      result += `\n\nCurrent Actual Totals:`;
-      for (const dir in totalRestraint) {
-        result += `   ${dir}: ${totalRestraint[dir]} lbs   |`;
-      }
-      return result.slice(0, -1);
+    function showModule(name) {
+      document.querySelectorAll('.module-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(name).classList.remove('hidden');
+      window.scrollTo({ top: document.getElementById(name).offsetTop, behavior: 'smooth' });
     }
-
-    function toggleMultiplier() {
-      doubleMultiplier = !doubleMultiplier;
-      const toggle = document.getElementById("multiplierToggle");
-      toggle.classList.toggle("active", doubleMultiplier);
-      toggle.innerText = doubleMultiplier ? "×2 ON" : "×2 OFF";
-    }
-
-    function calculateRestraint() {
-      const weight = parseFloat(document.getElementById("cargoWeight").value);
-      if (isNaN(weight) || weight <= 0) {
-        document.getElementById("result").innerText = "Enter a valid cargo weight.";
-        return;
-      }
-      const gForces = { FWD: 3.0, AFT: 1.5, LAT: 1.5, VERT: 2.0 };
-      requiredRestraint = {};
-      requiredText = `Required Restraint Forces for ${weight} lbs:`;
-      for (const dir in gForces) {
-        const force = Math.round(weight * gForces[dir]);
-        requiredRestraint[dir] = force;
-        requiredText += `\n${dir}: ${force} lbs`;
-      }
-      document.getElementById("result").innerText = displayTotals(requiredText);
-    }
-
-    function calculateActualRestraint() {
-      const actual = parseFloat(document.getElementById("actualLength").value);
-      const effective = parseFloat(document.getElementById("effectiveLength").value);
-      const factor = parseFloat(document.getElementById("restraintFactor").value);
-      const direction = document.getElementById("restraintDirection").value;
-
-      if (isNaN(actual) || actual <= 0 || isNaN(effective) || effective <= 0) {
-        document.getElementById("result").innerText += `\n\n⚠️ Enter valid actual and effective lengths.`;
-        return;
-      }
-
-      let restraint = (effective / actual) * factor;
-      if (doubleMultiplier) restraint *= 2;
-
-      restraint = Math.round(restraint);
-      totalRestraint[direction] += restraint;
-      lastAddition = { direction, restraint };
-
-      document.getElementById("result").innerText = displayTotals(requiredText || "Current Actual Totals:");
-    }
-
-    function undoLast() {
-      if (lastAddition && totalRestraint[lastAddition.direction] >= lastAddition.restraint) {
-        totalRestraint[lastAddition.direction] -= lastAddition.restraint;
-        document.getElementById("result").innerText = displayTotals(requiredText || "Current Actual Totals:");
-        lastAddition = null;
-      }
-    }
-
-    function updateLoadShiftFields() {
-      const target = document.getElementById("loadShiftTarget").value;
-      const fields = document.getElementById("loadShiftFields");
-      fields.innerHTML = "";
-      const addInput = (id, label) => fields.innerHTML += `<label for="${id}">${label}</label><input type="number" id="${id}" />`;
-
-      if (target !== "cgChange") addInput("cgChange", "CG Change (in)");
-      if (target !== "shiftArm") addInput("shiftArm", "Shift Arm (in)");
-      if (target !== "shiftWeight") addInput("shiftWeight", "Shifted Weight (lbs)");
-      if (target !== "grossWeight") addInput("grossWeight", "Gross Aircraft Weight (lbs)");
-
-      fields.innerHTML += '<button onclick="calculateLoadShift()">Calculate Load Shift</button>';
-    }
-
-    function calculateLoadShift() {
-      const get = id => parseFloat(document.getElementById(id)?.value);
-      const target = document.getElementById("loadShiftTarget").value;
-
-      const cg = get("cgChange");
-      const arm = get("shiftArm");
-      const wt = get("shiftWeight");
-      const gross = get("grossWeight");
-
-      let result = "";
-
-      if (target === "cgChange" && !isNaN(arm) && !isNaN(wt) && !isNaN(gross)) {
-        result = `CG Change = ${(arm * wt / gross).toFixed(1)} in`;
-      } else if (target === "shiftArm" && !isNaN(cg) && !isNaN(wt) && !isNaN(gross)) {
-        result = `Shift Arm = ${(cg * gross / wt).toFixed(1)} in`;
-      } else if (target === "shiftWeight" && !isNaN(cg) && !isNaN(arm) && !isNaN(gross)) {
-        result = `Shifted Weight = ${(cg * gross / arm).toFixed(0)} lbs`;
-      } else if (target === "grossWeight" && !isNaN(cg) && !isNaN(arm) && !isNaN(wt)) {
-        result = `Gross Weight = ${(arm * wt / cg).toFixed(0)} lbs`;
-      } else {
-        result = "⚠️ Please enter valid inputs for the other three fields.";
-      }
-
-      document.getElementById("loadShiftResult").innerText = result;
-    }
-
-    window.addEventListener("DOMContentLoaded", updateLoadShiftFields);
   </script>
 </body>
 </html>
