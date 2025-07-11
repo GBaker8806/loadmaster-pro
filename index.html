@@ -2,107 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Loadmaster Pro</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  <style>
-    body {
-      background-color: #121212;
-      color: #e0e0e0;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 1rem;
-    }
-    .module-icon {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #444;
-      border-radius: 16px;
-      padding: 1rem;
-      background-color: #1e1e1e;
-      transition: background-color 0.2s ease;
-      cursor: pointer;
-    }
-    .module-icon:hover {
-      background-color: #2a2a2a;
-    }
-    .icon-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
-    }
-    h1 {
-      text-align: center;
-      color: #99e1d9;
-    }
-    .icon-label {
-      margin-top: 0.5rem;
-      text-align: center;
-    }
-    .module-content {
-      margin-top: 2rem;
-      border-top: 1px solid #444;
-      padding-top: 1rem;
-    }
-    .hidden {
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h1>Loadmaster Pro</h1>
-  <div class="icon-grid">
-    <div class="module-icon" onclick="showModule('restraint')">
-      <div style="font-size: 2rem">🔗</div>
-      <div class="icon-label">Restraint</div>
-    </div>
-    <div class="module-icon" onclick="showModule('loadshift')">
-      <div style="font-size: 2rem">📦</div>
-      <div class="icon-label">Load Shift</div>
-    </div>
-    <div class="module-icon" onclick="showModule('winching')">
-      <div style="font-size: 2rem">🧲</div>
-      <div class="icon-label">Winching</div>
-    </div>
-    <div class="module-icon" onclick="showModule('psi')">
-      <div style="font-size: 2rem">🚙</div>
-      <div class="icon-label">&gt; 100 PSI Tires</div>
-    </div>
-    <div class="module-icon" onclick="showModule('vehiclecg')">
-      <div style="font-size: 2rem">🚚</div>
-      <div class="icon-label">Vehicle CG</div>
-    </div>
-    <div class="module-icon" onclick="showModule('weightbalance')">
-      <div style="font-size: 2rem">⚖️</div>
-      <div class="icon-label">W&B + MAC</div>
-    </div>
-    <div class="module-icon" onclick="showModule('sleeper')">
-      <div style="font-size: 2rem">🛏️</div>
-      <div class="icon-label">Sleeper Shoring</div>
-    </div>
-    <div class="module-icon" onclick="showModule('approach')">
-      <div style="font-size: 2rem">🪜</div>
-      <div class="icon-label">Approach Shoring</div>
+<body class="light">
+  <button onclick="toggleTheme()">🌗 Toggle Theme</button>
+
+  <div id="homeScreen">
+    <h1>Loadmaster Pro</h1>
+    <div class="icon-grid">
+      <div class="module-icon" onclick="loadModule('restraint')">🔗 Restraint</div>
+      <div class="module-icon" onclick="loadModule('loadshift')">📦 Load Shift</div>
+      <div class="module-icon" onclick="loadModule('winching')">🧲 Winching</div>
+      <div class="module-icon" onclick="loadModule('psi')">🚙 >100 PSI Tires</div>
+      <div class="module-icon" onclick="loadModule('sleeper')">🛏️ Sleeper Shoring</div>
+      <div class="module-icon" onclick="loadModule('approach')">🛬 Approach Shoring</div>
     </div>
   </div>
 
-  <!-- MODULE CONTENTS HERE -->
-  <!-- Each module's HTML will be dynamically inserted below this line -->
-
-  <div id="modules">
-    <!-- All previously completed modules have been successfully merged into this placeholder -->
-  </div>
+  <div id="moduleContainer" class="hidden"></div>
 
   <script>
-    function showModule(name) {
-      document.querySelectorAll('.module-content').forEach(el => el.classList.add('hidden'));
-      const selected = document.getElementById(name);
-      if (selected) {
-        selected.classList.remove('hidden');
-        window.scrollTo({ top: selected.offsetTop, behavior: 'smooth' });
-      }
+    function loadModule(name) {
+      fetch(`modules/${name}.html`)
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("homeScreen").classList.add("hidden");
+          const container = document.getElementById("moduleContainer");
+          container.innerHTML = `<button onclick="goHome()">🏠 Home</button>` + html;
+          container.classList.remove("hidden");
+        });
+    }
+
+    function goHome() {
+      document.getElementById("moduleContainer").innerHTML = "";
+      document.getElementById("moduleContainer").classList.add("hidden");
+      document.getElementById("homeScreen").classList.remove("hidden");
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      document.body.classList.toggle("light");
     }
   </script>
 </body>
