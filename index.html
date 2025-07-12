@@ -196,7 +196,7 @@
     <div class="icon-label">Load Shift</div>
   </div>
   <div class="module-icon" onclick="navigate('modules/winching.html')">
-    <img src="icons/winch-icon.png" alt="Winching" class="module-icon-img" />
+    <img src="icons/winching-icon.png" alt="Winching" class="module-icon-img" />
     <div class="icon-label">Winching</div>
   </div>
   <div class="module-icon" onclick="navigate('modules/tires_over_100psi.html')">
@@ -216,33 +216,11 @@
     <div class="icon-label">Approach Shoring</div>
   </div>
 </div>
-
   <script>
     function toggleTheme() {
       document.body.classList.toggle('light');
       document.body.classList.toggle('dark');
     }
-
-    function navigate(path) {
-      window.location.href = path;
-    }
-  </script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js');
-  }
-</script>
-</body>
-</html>
-
-  </div>
-
-  <script>
-    function toggleTheme() {
-      document.body.classList.toggle('light');
-      document.body.classList.toggle('dark');
-    }
-
     function navigate(path) {
       window.location.href = path;
     }
