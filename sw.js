@@ -2,8 +2,8 @@ const CACHE_NAME = "loadmaster-pro-cache-v1";
 const urlsToCache = [
   "index.html",
   "manifest.json",
-  "icon-192.png.PNG",
-  "icon-512.png.PNG",
+  "icon-192.PNG",
+  "icon-512.PNG",
   // Add any module pages you want cached offline:
   "modules/restraint.html",
   "modules/loadshift.html",
