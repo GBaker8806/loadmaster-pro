@@ -3,7 +3,7 @@ self.addEventListener("install", e => {
     caches.open("loadmaster-cache").then(cache => {
       return cache.addAll([
         "/",
-        "/index.html",
+        "/loadmaster-pro/index.html",
         "/manifest.json",
         "/modules/vehicle_cg.html"
         // Add other modules here
