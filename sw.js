@@ -1,23 +1,24 @@
-const CACHE_NAME = "loadmaster-pro-cache-v1";
-const urlsToCache = [
-  "index.html",
-  "manifest.json",
-  "icon-192.PNG",
-  "icon-512.PNG",
-  // Add any module pages you want cached offline:
-  "modules/restraint.html",
-  "modules/loadshift.html",
-  "modules/winching.html",
-  "modules/tires_over_100psi.html",
-  "modules/vehiclecg.html",
-  "modules/sleeper.html",
-  "modules/approach.html"
+const cacheName = "loadmaster-pro-cache-v1";
+const assets = [
+  "/",
+  "/index.html",
+  "/style.css",
+  "/manifest.json",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
+  "/modules/restraint.html",
+  "/modules/loadshift.html",
+  "/modules/winching.html",
+  "/modules/tires_over_100psi.html",
+  "/modules/vehiclecg.html",
+  "/modules/sleeper.html",
+  "/modules/approach.html"
 ];
 
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(urlsToCache);
+    caches.open(cacheName).then(cache => {
+      return cache.addAll(assets);
     })
   );
 });
