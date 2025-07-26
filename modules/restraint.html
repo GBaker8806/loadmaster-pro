@@ -98,10 +98,18 @@
   </select>
 
   <label for="actualLength">Actual Length (in):</label>
-  <input type="number" id="actualLength" placeholder="e.g., 100" />
+  <input
+  inputmode="numeric" 
+  pattern="[0-9]*" 
+  class="form-control"
+  id="actualLength" placeholder="e.g., 100" />
 
   <label for="effectiveLength">Effective Length (in):</label>
-  <input type="number" id="effectiveLength" placeholder="e.g., 80" />
+  <input
+  inputmode="numeric" 
+  pattern="[0-9]*" 
+  class="form-control"
+  id="effectiveLength" placeholder="e.g., 80" />
 
   <label for="restraintFactor">Restraint Factor:</label>
   <select id="restraintFactor">
