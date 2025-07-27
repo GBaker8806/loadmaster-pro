@@ -42,12 +42,20 @@
 
   <div class="mb-3">
     <label for="overhang" class="form-label">Overhang (in)</label>
-    <input type="number" id="overhang" class="form-control" />
+  <input 
+  inputmode="numeric" 
+  pattern="[0-9]*" 
+  class="form-control" 
+  id="overhang" class="form-control" />
   </div>
 
   <div class="mb-3">
     <label for="clearance" class="form-label">Ground Clearance (in)</label>
-    <input type="number" id="clearance" class="form-control" />
+  <input 
+  inputmode="numeric" 
+  pattern="[0-9]*" 
+  class="form-control"
+  id="clearance" class="form-control" />
   </div>
 
   <button class="btn btn-primary" onclick="calculateApproach()">Calculate</button>
