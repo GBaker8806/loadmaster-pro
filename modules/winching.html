@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loadmaster Pro: Restraint + Load Shift + Winching</title>
+  <title>Winching Calculator</title>
   <style>
     :root {
       --highlight-color: #3e8eaa;
@@ -12,6 +12,9 @@
       --accent-color: #99e1d9;
       --text-color: #e0e0e0;
       --card-color: #1e1e1e;
+      --danger: #ff5c5c;
+      --ok: #66d17a;
+      --warn: #ffd166;
     }
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -42,11 +45,11 @@
       color: #fff;
       font-weight: bold;
       transition: background-color 0.3s ease;
+      cursor: pointer;
     }
-    button:hover {
-      background-color: var(--highlight-color);
-    }
-    #result, #loadShiftResult, #winchResult {
+    button:hover { background-color: var(--highlight-color); }
+
+    #winchResult {
       margin-top: 1rem;
       padding: 1rem;
       background-color: var(--card-color);
@@ -55,23 +58,17 @@
       white-space: pre-line;
       font-weight: bold;
     }
-    .toggle-button {
-      margin-top: 1rem;
-      background-color: #2a2a2a;
-      border: 2px solid var(--accent-color);
-      color: white;
-    }
-    .toggle-button.active {
-      background-color: var(--accent-color);
-      color: black;
-    }
+    .tag { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 700; }
+    .pass { background: var(--ok); color: #032b11; }
+    .fail { background: var(--danger); color: white; }
+    .note { color: #ddd; font-weight: normal; }
   </style>
 </head>
 <body>
-  <hr style="margin: 2rem 0; border-color: #444;" />
   <h2>Winching Calculator</h2>
+
   <label for="winchWeight">Cargo Weight (lbs):</label>
-  <input type="number" id="winchWeight" placeholder="e.g., 22000" />
+  <input type="text" inputmode="numeric" pattern="[0-9]*" id="winchWeight" placeholder="e.g., 22000" />
 
   <label for="winchRamp">Ramp Angle:</label>
   <select id="winchRamp">
@@ -99,44 +96,84 @@
   <script>
     function calculateWinching() {
       const weight = parseFloat(document.getElementById("winchWeight").value);
-      const angle = parseFloat(document.getElementById("winchRamp").value);
+      const angle = document.getElementById("winchRamp").value; // keep as string to map
       const surface = document.getElementById("winchSurface").value;
 
-      if (isNaN(weight)) {
-        document.getElementById("winchResult").innerText = "Please enter a valid cargo weight.";
+      const out = document.getElementById("winchResult");
+
+      if (isNaN(weight) || weight <= 0) {
+        out.innerText = "Please enter a valid cargo weight.";
         return;
       }
 
+      // Max single-line capacities by surface and ramp angle index:
+      // [0° , 3.8° , 5° , 15°]
       const maxWeights = {
         pneumatic: [250000, 60038, 49281, 20000],
-        tracks: [93750, 51426, 44996, 22303],
-        steel: [416667, 58358, 46699, 17729],
-        roller: [375000, 87250, 70146, 26947],
-        greased: [28846, 23043, 21679, 14701],
-        dry: [15306, 13513, 13043, 10241],
-        skids: [9202, 8529, 8345, 7168],
-        nonskid: [7500, 7049, 6925, 6122]
+        tracks:    [ 93750, 51426, 44996, 22303],
+        steel:     [416667, 58358, 46699, 17729],
+        roller:    [375000, 87250, 70146, 26947],
+        greased:   [ 28846, 23043, 21679, 14701],
+        dry:       [ 15306, 13513, 13043, 10241],
+        skids:     [  9202,  8529,  8345,  7168],
+        nonskid:   [  7500,  7049,  6925,  6122]
       };
 
-      const rampIndexMap = {
-        "0": 0,
-        "3.8": 1,
-        "5": 2,
-        "15": 3
-      };
+      const rampIndexMap = { "0": 0, "3.8": 1, "5": 2, "15": 3 };
 
-      const index = rampIndexMap[angle.toString()];
-      const allowed = maxWeights[surface][index];
+      if (!(surface in maxWeights) || !(angle in rampIndexMap)) {
+        out.innerText = "Invalid selection. Please recheck surface and ramp angle.";
+        return;
+      }
 
-      const lines = Math.ceil(weight / allowed);
-      const snatchBlocks = Math.min(lines - 1, 4);
-      const totalLines = Math.min(lines, 5);
+      const idx = rampIndexMap[angle];
+      const singleLineCap = maxWeights[surface][idx];     // capacity for a single line
+      const maxLines = 5;                                 // quintuple line (4 snatch blocks)
+      const maxSnatchBlocks = 4;
 
-      document.getElementById("winchResult").innerText =
-        `Surface: ${document.getElementById("winchSurface").selectedOptions[0].text}\n` +
-        `Ramp: ${document.getElementById("winchRamp").selectedOptions[0].text}\n` +
-        `Max Single Line Capacity: ${allowed.toLocaleString()} lbs\n` +
-        `Required Snatch Blocks: ${snatchBlocks} (for ${totalLines}-line winch)`;
+      // Required lines (ceil)
+      const requiredLines = Math.ceil(weight / singleLineCap);
+
+      // Clamp display lines (can't exceed 5)
+      const displayLines = Math.min(requiredLines, maxLines);
+      const displaySnatch = Math.min(Math.max(displayLines - 1, 0), maxSnatchBlocks);
+
+      // Max allowable with quintuple line
+      const maxAllowable = singleLineCap * maxLines;
+
+      const surfaceText = document.getElementById("winchSurface").selectedOptions[0].text;
+      const rampText = document.getElementById("winchRamp").selectedOptions[0].text;
+
+      // PASS/FAIL & margin
+      const withinCapability = weight <= maxAllowable;
+      const margin = withinCapability ? (maxAllowable - weight) : (weight - maxAllowable);
+
+      const statusTag = withinCapability
+        ? `<span class="tag pass">PASS</span>`
+        : `<span class="tag fail">FAIL</span>`;
+
+      const marginLine = withinCapability
+        ? `Margin under max: ${margin.toLocaleString()} lbs`
+        : `EXCEEDS MAX by: ${margin.toLocaleString()} lbs`;
+
+      // Build output
+      let text = "";
+      text += `${statusTag}\n`;
+      text += `Surface: ${surfaceText}\n`;
+      text += `Ramp: ${rampText}\n`;
+      text += `Max Single Line Capacity: ${singleLineCap.toLocaleString()} lbs\n`;
+      text += `Required Lines: ${requiredLines}  (Displays up to ${maxLines}-line config)\n`;
+      text += `Recommended Configuration: ${displayLines}-line winch  |  Snatch Blocks: ${displaySnatch}\n`;
+      text += `Maximum Allowable Cargo (with ${maxLines}-line): ${maxAllowable.toLocaleString()} lbs\n`;
+      text += `${marginLine}\n`;
+
+      if (!withinCapability) {
+        text += `\n⚠️ Selected surface/ramp combination exceeds winch capability even with ${maxLines}-line. Choose a lower ramp angle, change surface condition, or reduce cargo weight.`;
+      }
+
+      text += `\n\n<span class="note">Note: A quintuple line uses up to 4 snatch blocks (5 lines total).</span>`;
+
+      out.innerHTML = text;
     }
   </script>
 </body>
