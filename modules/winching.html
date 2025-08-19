@@ -149,8 +149,8 @@
       const margin = withinCapability ? (maxAllowable - weight) : (weight - maxAllowable);
 
       const statusTag = withinCapability
-        ? `<span class="tag pass">PASS</span>`
-        : `<span class="tag fail">FAIL</span>`;
+        ? `<span class="tag pass">LOADABLE</span>`
+        : `<span class="tag fail">EXCEEDS LIMITS</span>`;
 
       const marginLine = withinCapability
         ? `Margin under max: ${margin.toLocaleString()} lbs`
