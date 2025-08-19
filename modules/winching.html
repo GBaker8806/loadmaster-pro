@@ -168,10 +168,10 @@
       text += `${marginLine}\n`;
 
       if (!withinCapability) {
-        text += `\n⚠️ Selected surface/ramp combination exceeds winch capability even with ${maxLines}-line. Choose a lower ramp angle, change surface condition, or reduce cargo weight.`;
+        text += `\n⚠️ Selected surface/ramp combination exceeds winch capability even with ${maxLines}-line.`;
       }
 
-      text += `\n\n<span class="note">Note: A quintuple line uses up to 4 snatch blocks (5 lines total).</span>`;
+      text += `\n\n<span class="note">Note: A quintuple line uses 4 snatch blocks (5 lines total).</span>`;
 
       out.innerHTML = text;
     }
