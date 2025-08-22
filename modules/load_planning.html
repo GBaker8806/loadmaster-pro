@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Load Planning</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <style>
+    /* Module-specific light polish */
+    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
+    th, td { border-bottom: 1px solid #444; padding: 0.5rem; text-align: center; }
+    th { background: var(--card-color); }
+    .row-actions button { width: auto; padding: 0.35rem 0.6rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .totals { margin-top: 1rem; }
+    .pill { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 999px; font-weight: 700; }
+    .ok    { background: #2b8a3e; color: #fff; }
+    .warn  { background: #e67700; color: #fff; }
+    .bad   { background: #c92a2a; color: #fff; }
+    .note  { opacity: 0.85; font-size: 0.95rem; }
+    .section { background: var(--card-color); border-left: 4px solid var(--primary-color); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
+    .tight { margin-top: 0.5rem; }
+    input[type="text"] { text-align: right; }
+  </style>
+</head>
+<body>
+  <button onclick="goHome()" class="home-button">🏠 Home</button>
+  <h1>Load Planning</h1>
+
+  <!-- Operating (Basic Aircraft) inputs -->
+  <div class="section">
+    <h3>Operating (Basic Aircraft)</h3>
+    <div class="grid-2">
+      <div>
+        <label for="opWeight">Operating Weight (lbs)</label>
+        <input type="text" id="opWeight" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 270000">
+      </div>
+      <div>
+        <label for="opMom10k">Operating MOM / 10,000</label>
+        <input type="text" id="opMom10k" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 21500">
+      </div>
+    </div>
+    <p class="note tight">Tip: If you only know Operating CG, multiply by Operating Weight and then divide by 10,000 to get MOM/10,000.</p>
+  </div>
+
+  <!-- Payload table -->
+  <div class="section">
+    <h3>Payload Items</h3>
+    <div class="note tight">Enter Left, Right, Station. Weight auto-sums (Left + Right). MOM/10,000 is computed.</div>
+    <table id="payloadTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Left (lbs)</th>
+          <th>Right (lbs)</th>
+          <th>Station (in)</th>
+          <th>Weight (lbs)</th>
+          <th>MOM / 10,000</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="payloadBody">
+        <!-- Rows injected by JS -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="4" style="text-align:right">Totals:</th>
+          <th id="totalWeight">0</th>
+          <th id="totalMom10k">0</th>
+          <th></th>
+        </tr>
+      </tfoot>
+    </table>
+    <div style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <button onclick="addRow()">+ Add Row</button>
+      <button onclick="clearAll()">Clear All</button>
+    </div>
+  </div>
+
+  <!-- Computed outputs -->
+  <div class="section">
+    <h3>Results</h3>
+    <div class="grid-2">
+      <div>
+        <label>Load CB (in)</label>
+        <input type="text" id="loadCB" readonly>
+      </div>
+      <div>
+        <label>Total Payload (lbs)</label>
+        <input type="text" id="payloadTotal" readonly>
+      </div>
+      <div>
+        <label>Zero Fuel CG (in)</label>
+        <input type="text" id="zfCG" readonly>
+      </div>
+      <div>
+        <label>Zero Fuel %MAC</label>
+        <input type="text" id="zfMAC" readonly>
+      </div>
+    </div>
+
+    <!-- Optional limits check (user can enter ranges if desired) -->
+    <div class="grid-2 tight">
+      <div>
+        <label for="zfMin">ZF %MAC Min (optional)</label>
+        <input type="text" id="zfMin" inputmode="numeric" pattern="[0-9.]*" placeholder="e.g., 16.0">
+      </div>
+      <div>
+        <label for="zfMax">ZF %MAC Max (optional)</label>
+        <input type="text" id="zfMax" inputmode="numeric" pattern="[0-9.]*" placeholder="e.g., 33.0">
+      </div>
+    </div>
+    <div id="limitsBadge" class="tight"></div>
+  </div>
+
+  <script>
+    // Constants (C-17A per your data)
+    const LEMAC = 793.6;     // in
+    const MAC   = 309.5;     // in
+
+    // Rounding helpers based on your global rules:
+    // - WEIGHT & LSW: round to nearest whole pound
+    // - MOMENT: nearest whole "moment" (we'll round MOM/10,000 as integer)
+    // - CG ARM: nearest tenth
+    // - %MAC: nearest tenth
+    function r0(n)  { return Math.round(Number(n) || 0); }                  // whole number
+    function r1(n)  { return Math.round((Number(n) || 0) * 10) / 10; }      // 1 decimal
+
+    const tbody = document.getElementById('payloadBody');
+    const totalWeightEl = document.getElementById('totalWeight');
+    const totalMom10kEl = document.getElementById('totalMom10k');
+
+    const loadCBEl   = document.getElementById('loadCB');
+    const zfCGEl     = document.getElementById('zfCG');
+    const zfMACEl    = document.getElementById('zfMAC');
+    const payloadTotalEl = document.getElementById('payloadTotal');
+    const limitsBadge = document.getElementById('limitsBadge');
+
+    const opWeightEl = document.getElementById('opWeight');
+    const opMom10kEl = document.getElementById('opMom10k');
+
+    function goHome() {
+      window.location.href = "../index.html";
+    }
+
+    function newRow(index) {
+      const tr = document.createElement('tr');
+
+      tr.innerHTML = `
+        <td class="row-index">${index}</td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*" class="inp-left" placeholder="0"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*" class="inp-right" placeholder="0"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9.]*" class="inp-station" placeholder="0"></td>
+        <td class="out-weight">0</td>
+        <td class="out-mom10k">0</td>
+        <td class="row-actions">
+          <button type="button" onclick="removeRow(this)">🗑</button>
+        </td>
+      `;
+
+      // Attach listeners for live calc
+      tr.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', recalc);
+      });
+
+      return tr;
+    }
+
+    function renumberRows() {
+      [...tbody.querySelectorAll('.row-index')].forEach((cell, i) => {
+        cell.textContent = i + 1;
+      });
+    }
+
+    function addRow() {
+      const idx = tbody.children.length + 1;
+      tbody.appendChild(newRow(idx));
+      recalc();
+    }
+
+    function removeRow(btn) {
+      const tr = btn.closest('tr');
+      if (tr) {
+        tr.remove();
+        renumberRows();
+        recalc();
+      }
+    }
+
+    function clearAll() {
+      tbody.innerHTML = '';
+      addRow(); // keep one fresh row
+      opWeightEl.value = '';
+      opMom10kEl.value = '';
+      document.getElementById('zfMin').value = '';
+      document.getElementById('zfMax').value = '';
+      recalc();
+    }
+
+    function parseNum(val) {
+      if (typeof val !== 'string') return Number(val) || 0;
+      const cleaned = val.replace(/,/g, '');
+      return Number(cleaned) || 0;
+    }
+
+    function recalc() {
+      let totalWeight = 0;     // lbs
+      let totalMom10k = 0;     // integer "moments/10k" per rounding rule
+      // Row by row
+      [...tbody.querySelectorAll('tr')].forEach(tr => {
+        const left = parseNum(tr.querySelector('.inp-left').value);
+        const right = parseNum(tr.querySelector('.inp-right').value);
+        const station = parseNum(tr.querySelector('.inp-station').value);
+
+        const weight = r0(left + right); // whole lbs
+        // MOM/10,000 rounded to nearest whole moment:
+        const mom10k = r0((weight * station) / 10000);
+
+        tr.querySelector('.out-weight').textContent  = weight.toLocaleString();
+        tr.querySelector('.out-mom10k').textContent  = mom10k.toLocaleString();
+
+        totalWeight += weight;
+        totalMom10k += mom10k;
+      });
+
+      // Totals display
+      totalWeightEl.textContent = totalWeight.toLocaleString();
+      totalMom10kEl.textContent = totalMom10k.toLocaleString();
+      payloadTotalEl.value = totalWeight.toLocaleString();
+
+      // Load CB (payload-only CG)
+      const totalMom = totalMom10k * 10000; // convert back to full moment
+      const loadCB = totalWeight > 0 ? totalMom / totalWeight : 0;
+      loadCBEl.value = totalWeight > 0 ? r1(loadCB).toFixed(1) : '';
+
+      // Zero Fuel CG
+      const opW   = parseNum(opWeightEl.value);
+      const opM10 = parseNum(opMom10kEl.value);
+      const opMom = opM10 * 10000;
+
+      const zfW   = opW + totalWeight;
+      const zfMom = opMom + totalMom;
+      const zfCG  = zfW > 0 ? zfMom / zfW : 0;
+
+      zfCGEl.value = zfW > 0 ? r1(zfCG).toFixed(1) : '';
+
+      // Zero Fuel %MAC
+      const macPct = zfW > 0 ? ((zfCG - LEMAC) / MAC) * 100 : 0;
+      zfMACEl.value = zfW > 0 ? r1(macPct).toFixed(1) : '';
+
+      // Optional limits badge
+      const min = parseFloat(document.getElementById('zfMin').value);
+      const max = parseFloat(document.getElementById('zfMax').value);
+      if (zfW > 0 && !isNaN(min) && !isNaN(max)) {
+        const pct = r1(macPct);
+        let badge = '';
+        if (pct < min) badge = `<span class="pill bad">%MAC ${pct.toFixed(1)} — BELOW MIN ${min.toFixed(1)}</span>`;
+        else if (pct > max) badge = `<span class="pill bad">%MAC ${pct.toFixed(1)} — ABOVE MAX ${max.toFixed(1)}</span>`;
+        else badge = `<span class="pill ok">%MAC ${pct.toFixed(1)} — WITHIN LIMITS</span>`;
+        limitsBadge.innerHTML = badge;
+      } else {
+        limitsBadge.innerHTML = '';
+      }
+    }
+
+    // Recalc when operating values or limits change
+    ['opWeight','opMom10k','zfMin','zfMax'].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('input', recalc);
+    });
+
+    // Init with 3 rows
+    addRow(); addRow(); addRow();
+  </script>
+</body>
+</html>
