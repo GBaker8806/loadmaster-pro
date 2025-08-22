@@ -1,4 +1,4 @@
-const cacheName = "loadmaster-pro-cache-v1";
+const cacheName = "loadmaster-pro-cache-v2";
 const assets = [
   "/",
   "/index.html",
@@ -12,7 +12,8 @@ const assets = [
   "/modules/tires_over_100psi.html",
   "/modules/vehiclecg.html",
   "/modules/sleeper.html",
-  "/modules/approach.html"
+  "/modules/approach.html",
+  "/modules/load_planning.html"
 ];
 
 self.addEventListener("install", event => {
