@@ -4,32 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Load Planning</title>
+  <!-- Uses your shared styles if present; safe to omit if you don't have styles.css -->
   <link rel="stylesheet" href="../styles.css" />
   <style>
-    table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; }
-    th, td { border-bottom: 1px solid #444; padding: 0.5rem; text-align: center; }
-    th { background: var(--card-color); }
-    .row-actions button { width: auto; padding: 0.35rem 0.6rem; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
-    .totals { margin-top: 1rem; }
-    .pill { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 999px; font-weight: 700; }
-    .ok    { background: #2b8a3e; color: #fff; }
-    .warn  { background: #e67700; color: #fff; }
-    .bad   { background: #c92a2a; color: #fff; }
-    .note  { opacity: 0.85; font-size: 0.95rem; }
-    .section { background: var(--card-color); border-left: 4px solid var(--primary-color); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
-    .tight { margin-top: 0.5rem; }
-    input[type="text"] { text-align: right; }
-    textarea { width: 100%; min-height: 120px; padding: .6rem; border-radius: 8px; border: 1px solid #444; background: #1b1b1b; color: var(--text-color); }
-    .muted { opacity: .7; }
+    :root {
+      --bg: #121212; --text:#e0e0e0; --card:#1e1e1e; --pri:#1f6f8b;
+    }
+    body { background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, Arial, sans-serif; margin:0; padding:16px; }
+    h1,h3,h4 { margin: .25rem 0 .5rem; }
+    .home-button { margin-bottom: .75rem; padding:.45rem .8rem; border:none; border-radius:8px; background:#2b2f34; color:#fff; cursor:pointer; }
+    .section { background: var(--card); border-left: 4px solid var(--pri); border-radius: 10px; padding: 14px; margin-top: 12px; }
+    .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    label { display:block; font-weight:600; margin-bottom:4px; }
+    input[type="text"], textarea { width:100%; padding:.6rem .65rem; border-radius:8px; border:1px solid #444; background:#1b1b1b; color:var(--text); }
+    textarea { min-height:120px; }
+    button { padding:.5rem .8rem; border-radius:8px; border:1px solid #3b4854; background:#2a3540; color:#fff; cursor:pointer; }
+    button:hover { filter:brightness(1.1); }
+    table { width:100%; border-collapse:collapse; margin-top:.5rem; }
+    th,td { padding:.5rem; text-align:center; border-bottom:1px solid #3a3a3a; }
+    th { background:#222; }
+    .row-actions button { padding:.35rem .55rem; }
+    .pill { display:inline-block; padding:.18rem .55rem; border-radius:999px; font-weight:700; font-size:.9rem; }
+    .ok { background:#2b8a3e; color:#fff; }
+    .warn { background:#e67700; color:#fff; }
+    .bad { background:#c92a2a; color:#fff; }
+    .muted { opacity:.75; }
   </style>
 </head>
 <body>
   <button onclick="goHome()" class="home-button">🏠 Home</button>
   <h1>Load Planning</h1>
 
-  <!-- Operating (Basic Aircraft) inputs -->
+  <!-- Operating (Basic Aircraft) -->
   <div class="section">
     <h3>Operating (Basic Aircraft)</h3>
     <div class="grid-2">
@@ -42,18 +49,19 @@
         <input type="text" id="opMom10k" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 21500">
       </div>
     </div>
-    <p class="note tight">Tip: If you only know Operating CG, multiply by Operating Weight and then divide by 10,000 to get MOM/10,000.</p>
+    <p class="muted" style="margin:.4rem 0 0">Tip: If you only know Operating CG, multiply by Operating Weight and divide by 10,000 to get MOM/10,000.</p>
   </div>
 
-  <!-- Payload table -->
+  <!-- Payload items -->
   <div class="section">
     <h3>Payload Items</h3>
-    <div class="note tight">Enter Left, Right, Station. Weight auto-sums (Left + Right). MOM/10,000 is computed.</div>
+    <p class="muted">Enter Left, <b>Center</b>, Right, and Station. Weight auto-sums (Left + Center + Right). MOM/10,000 is computed.</p>
     <table id="payloadTable">
       <thead>
         <tr>
           <th>#</th>
           <th>Left (lbs)</th>
+          <th>Center (lbs)</th>
           <th>Right (lbs)</th>
           <th>Station (in)</th>
           <th>Weight (lbs)</th>
@@ -64,20 +72,20 @@
       <tbody id="payloadBody"></tbody>
       <tfoot>
         <tr>
-          <th colspan="4" style="text-align:right">Totals:</th>
+          <th colspan="5" style="text-align:right">Totals:</th>
           <th id="totalWeight">0</th>
           <th id="totalMom10k">0</th>
           <th></th>
         </tr>
       </tfoot>
     </table>
-    <div style="margin-top:0.75rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+    <div style="margin-top:.75rem; display:flex; gap:.5rem; flex-wrap:wrap;">
       <button onclick="addRow()">+ Add Row</button>
       <button onclick="clearAll()">Clear All</button>
     </div>
   </div>
 
-  <!-- Computed outputs -->
+  <!-- Computed -->
   <div class="section">
     <h3>Results</h3>
     <div class="grid-2">
@@ -98,14 +106,13 @@
         <input type="text" id="zfMAC" readonly>
       </div>
     </div>
-
-    <div id="limitsBadge" class="tight"></div>
+    <div id="limitsBadge" style="margin-top:.35rem"></div>
   </div>
 
   <!-- Envelope (Non-E/R) -->
   <div class="section">
     <h3>Cargo Weight Loading Envelope — Non-E/R</h3>
-    <p class="note">This section checks the <strong>payload CG (Load CB)</strong> against the Non-E/R envelope. Add anchor points from the TO chart below (payload lb → forward & aft station). Linear interpolation is used between points.</p>
+    <p class="muted">Checks <b>Load CB</b> against the Non-E/R envelope. Paste anchor points from the TO as CSV (<code>payload,fwdFS,aftFS</code>). Linear interpolation between points.</p>
 
     <div class="grid-3">
       <div>
@@ -122,28 +129,28 @@
       </div>
     </div>
 
-    <div id="envBadge" class="tight"></div>
+    <div id="envBadge" style="margin-top:.35rem"></div>
 
-    <h4 class="tight">Envelope Points (paste CSV: payload,fwdFS,aftFS)</h4>
-    <textarea id="envCSV" spellcheck="false" class="muted" placeholder="Example lines:
+    <h4 style="margin:.75rem 0 .3rem">Envelope Points</h4>
+    <textarea id="envCSV" spellcheck="false" class="muted" placeholder="Example:
 45000,616,945
-## Add more lines here using the TO chart…"></textarea>
+# Add more lines here from the TO chart"></textarea>
     <div style="margin-top:.5rem; display:flex; gap:.5rem; flex-wrap:wrap;">
       <button onclick="loadEnvelope()">Load/Update Envelope</button>
-      <button onclick="resetEnvelope()">Reset to Seed Example</button>
+      <button onclick="resetEnvelope()">Reset to Example</button>
     </div>
   </div>
 
   <script>
-    // Constants (C-17A per your data)
+    // Constants
     const LEMAC = 793.6;     // in
     const MAC   = 309.5;     // in
 
-    // Rounding helpers per your rules
-    function r0(n){ return Math.round(Number(n)||0); }            // whole number
-    function r1(n){ return Math.round((Number(n)||0)*10)/10; }    // 1 decimal
+    // Rounding helpers (whole number, 1 decimal)
+    const r0 = n => Math.round(Number(n)||0);
+    const r1 = n => Math.round((Number(n)||0)*10)/10;
 
-    // === PAYLOAD TABLE ===
+    // Elements
     const tbody = document.getElementById('payloadBody');
     const totalWeightEl = document.getElementById('totalWeight');
     const totalMom10kEl = document.getElementById('totalMom10k');
@@ -152,36 +159,37 @@
     const zfCGEl     = document.getElementById('zfCG');
     const zfMACEl    = document.getElementById('zfMAC');
     const payloadTotalEl = document.getElementById('payloadTotal');
-    const limitsBadge = document.getElementById('limitsBadge');
 
     const opWeightEl = document.getElementById('opWeight');
     const opMom10kEl = document.getElementById('opMom10k');
 
     function goHome(){ window.location.href = "../index.html"; }
 
+    function parseNum(val){
+      if(typeof val!=='string') return Number(val)||0;
+      return Number(val.replace(/,/g,''))||0;
+    }
+
+    // Build a new table row (with CENTER column)
     function newRow(index){
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="row-index">${index}</td>
-        <td><input type="text" inputmode="numeric" pattern="[0-9]*" class="inp-left" placeholder="0"></td>
-        <td><input type="text" inputmode="numeric" pattern="[0-9]*" class="inp-right" placeholder="0"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*"   class="inp-left"    placeholder="0"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*"   class="inp-center"  placeholder="0"></td>
+        <td><input type="text" inputmode="numeric" pattern="[0-9]*"   class="inp-right"   placeholder="0"></td>
         <td><input type="text" inputmode="numeric" pattern="[0-9.]*" class="inp-station" placeholder="0"></td>
         <td class="out-weight">0</td>
         <td class="out-mom10k">0</td>
-        <td class="row-actions">
-          <button type="button" onclick="removeRow(this)">🗑</button>
-        </td>
+        <td class="row-actions"><button type="button" onclick="removeRow(this)">🗑</button></td>
       `;
       tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', recalc));
       return tr;
     }
 
-    function renumberRows(){
-      [...tbody.querySelectorAll('.row-index')].forEach((cell,i)=>cell.textContent=i+1);
-    }
-
     function addRow(){ tbody.appendChild(newRow(tbody.children.length+1)); recalc(); }
     function removeRow(btn){ const tr=btn.closest('tr'); if(tr){ tr.remove(); renumberRows(); recalc(); } }
+    function renumberRows(){ [...tbody.querySelectorAll('.row-index')].forEach((c,i)=>c.textContent=i+1); }
 
     function clearAll(){
       tbody.innerHTML=''; addRow();
@@ -189,76 +197,51 @@
       recalc();
     }
 
-    function parseNum(val){
-      if(typeof val!=='string') return Number(val)||0;
-      return Number(val.replace(/,/g,''))||0;
-    }
-
-    // === ENVELOPE (Non-E/R) ===
-    // Internal storage of anchor points: [{w,fwd,aft}, ...] sorted by w (payload weight)
+    // Envelope handling
     let envelopePts = [];
-
-    // Seed with the single example from your chart
     function seedEnvelope(){
       envelopePts = [{ w: 45000, fwd: 616, aft: 945 }];
       document.getElementById('envCSV').value = "45000,616,945\n";
     }
-
     function loadEnvelope(){
       const txt = document.getElementById('envCSV').value || '';
       const lines = txt.split(/\r?\n/).map(s=>s.trim()).filter(Boolean).filter(s=>!s.startsWith('#'));
       const parsed = [];
       for(const line of lines){
-        const parts = line.split(',').map(s=>s.trim());
-        if(parts.length>=3){
-          const w = Number(parts[0]); const f = Number(parts[1]); const a = Number(parts[2]);
-          if(Number.isFinite(w) && Number.isFinite(f) && Number.isFinite(a)){
-            parsed.push({ w, fwd: f, aft: a });
-          }
-        }
+        const [wS,fS,aS] = line.split(',').map(s=>s.trim());
+        const w = Number(wS), f = Number(fS), a = Number(aS);
+        if(Number.isFinite(w) && Number.isFinite(f) && Number.isFinite(a)) parsed.push({w,fwd:f,aft:a});
       }
       parsed.sort((a,b)=>a.w-b.w);
-      if(parsed.length<1){
-        alert("No valid points found. Keep the format: payload,fwdFS,aftFS");
-        return;
-      }
-      envelopePts = parsed;
-      recalc(); // refresh check
+      if(parsed.length<1){ alert("No valid points found. Use: payload,fwdFS,aftFS"); return; }
+      envelopePts = parsed; recalc();
     }
-
     function resetEnvelope(){ seedEnvelope(); recalc(); }
 
-    // Given a payload weight, returns {fwd, aft} by linear interpolation across envelopePts.
     function interpolateEnvelope(payload){
       if(envelopePts.length===0) return null;
-      // exact or outside edges
       if(payload <= envelopePts[0].w) return { fwd: envelopePts[0].fwd, aft: envelopePts[0].aft };
       if(payload >= envelopePts[envelopePts.length-1].w) return { fwd: envelopePts[envelopePts.length-1].fwd, aft: envelopePts[envelopePts.length-1].aft };
-
-      // find bracketing points
       for(let i=0;i<envelopePts.length-1;i++){
         const p0=envelopePts[i], p1=envelopePts[i+1];
         if(payload>=p0.w && payload<=p1.w){
-          const t = (payload - p0.w) / (p1.w - p0.w);
-          const fwd = p0.fwd + t * (p1.fwd - p0.fwd);
-          const aft = p0.aft + t * (p1.aft - p0.aft);
-          return { fwd, aft };
+          const t=(payload-p0.w)/(p1.w-p0.w);
+          return { fwd: p0.fwd + t*(p1.fwd-p0.fwd), aft: p0.aft + t*(p1.aft-p0.aft) };
         }
       }
       return null;
     }
 
-    // === RECALC CORE ===
     function recalc(){
-      let totalWeight=0;
-      let totalMom10k=0;
+      let totalWeight=0, totalMom10k=0;
 
       [...tbody.querySelectorAll('tr')].forEach(tr=>{
-        const left=parseNum(tr.querySelector('.inp-left').value);
-        const right=parseNum(tr.querySelector('.inp-right').value);
-        const station=parseNum(tr.querySelector('.inp-station').value);
+        const left   = parseNum(tr.querySelector('.inp-left').value);
+        const center = parseNum(tr.querySelector('.inp-center').value);
+        const right  = parseNum(tr.querySelector('.inp-right').value);
+        const station= parseNum(tr.querySelector('.inp-station').value);
 
-        const weight = r0(left+right);
+        const weight = r0(left + center + right);
         const mom10k = r0((weight * station) / 10000);
 
         tr.querySelector('.out-weight').textContent = weight.toLocaleString();
@@ -270,14 +253,12 @@
 
       totalWeightEl.textContent = totalWeight.toLocaleString();
       totalMom10kEl.textContent = totalMom10k.toLocaleString();
-      payloadTotalEl.value = totalWeight.toLocaleString();
+      payloadTotalEl.value = totalWeight ? totalWeight.toLocaleString() : '';
 
-      // Load CB (payload CG)
       const totalMom = totalMom10k * 10000;
       const loadCB   = totalWeight>0 ? totalMom/totalWeight : 0;
       loadCBEl.value = totalWeight>0 ? r1(loadCB).toFixed(1) : '';
 
-      // Zero Fuel CG / %MAC
       const opW   = parseNum(opWeightEl.value);
       const opM10 = parseNum(opMom10kEl.value);
       const opMom = opM10 * 10000;
@@ -290,7 +271,7 @@
       const macPct  = zfW>0 ? ((zfCG - LEMAC) / MAC) * 100 : 0;
       zfMACEl.value = zfW>0 ? r1(macPct).toFixed(1) : '';
 
-      // Envelope check (Non-E/R) against Load CB
+      // Envelope check
       const envPayloadEl = document.getElementById('envPayload');
       const envFwdEl     = document.getElementById('envFwd');
       const envAftEl     = document.getElementById('envAft');
@@ -324,15 +305,14 @@
       }
     }
 
-    // Recalc when operating values change
+    // Listeners
     ['opWeight','opMom10k'].forEach(id => {
       document.getElementById(id).addEventListener('input', recalc);
     });
 
     // Init
-    seedEnvelope();
-    addRow(); addRow(); addRow();
-    recalc();
+    function init(){ seedEnvelope(); addRow(); addRow(); addRow(); recalc(); }
+    init();
   </script>
 </body>
 </html>
