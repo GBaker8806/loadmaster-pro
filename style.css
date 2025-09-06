@@ -1,93 +1,18 @@
-/* style.css */
-
-:root {
-  /* Define your color palette */
-  --primary-color: #007bff;  /* A nice blue */
-  --secondary-color: #6c757d; /* A grey */
-  --accent-color: #28a745;   /* A green for success/positive actions */
-  --text-color: #343a40;     /* Dark grey for text */
-  --background-color: #f8f9fa; /* Light grey background */
-  --light-grey: #eee;       /*Very light grey */
+:root{
+  --bg:#121212; --text:#e0e0e0; --card:#1e1e1e; --pri:#1f6f8b;
 }
-
-body {
-  font-family: sans-serif; /* Or choose a specific font like Arial, Helvetica */
-  background-color: var(--background-color);
-  color: var(--text-color);
-  margin: 0;  /* Reset default margins */
-  padding: 0; /* Reset default padding */
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,Arial,sans-serif;margin:0;padding:16px}
+h1,h2,h3{margin:.25rem 0 .6rem}
+.section{background:var(--card);border-left:4px solid var(--pri);border-radius:10px;padding:14px;margin-top:12px}
+label{display:block;font-weight:600;margin:.4rem 0 .25rem}
+input,select,button,textarea{
+  width:100%;box-sizing:border-box;border-radius:8px;border:1px solid #444;background:#1b1b1b;color:var(--text);
+  padding:.6rem .65rem;font-size:1rem
 }
-
-h1, h2, h3 {
-  color: var(--primary-color);
-  font-weight: bold;
-  margin-bottom: 0.5em;  /* Spacing below headings */
-}
-
-/* Basic button style */
-button {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease; /* Smooth transition on hover */
-}
-
-button:hover {
-  background-color: darken(var(--primary-color), 10%); /* Darken the color on hover */
-}
-
-input[type="text"],
-input[type="number"],
-select {  /* Apply to text inputs, number inputs, and select dropdowns */
-  padding: 8px;
-  border: 1px solid var(--light-grey);
-  border-radius: 4px;
-  box-sizing: border-box; /* Ensures padding doesn't affect width */
-  margin-bottom: 0.5em;
-  width: 200px; /* Adjust as needed */
-}
-
-/* Style for labels */
-label {
-  display: block; /* Ensure labels are on their own line */
-  margin-bottom: 0.2em;
-  font-weight: bold;
-} ```css
- /* Global Styles */
- body {
-   font-family: Arial, sans-serif;
-   background-color: #f0f0f0;
-   margin: 0;
-   padding: 0;
- }
-
- h1, h2, h3 {
-   color: #333;
-   font-weight: bold;
- }
-
- .button {
-   background-color: #4CAF50; /* Green */
-   border: none;
-   color: white;
-   padding: 10px 20px;
-   text-align: center;
-   text-decoration: none;
-   display: inline-block;
-   font-size: 16px;
-   cursor: pointer;
-   border-radius: 5px;
- }
-
- .input-field {
-   padding: 8px;
-   border: 1px solid #ccc;
-   border-radius: 4px;
-   box-sizing: border-box; /* Important for consistent sizing */
-   margin-bottom: 10px;
- }
- ```
+button{cursor:pointer;background:#2a3540;border:1px solid #3b4854;color:#fff}
+button:hover{filter:brightness(1.1)}
+.home-button{width:auto;display:inline-flex;gap:.5rem;align-items:center;margin-bottom:.75rem;
+  padding:.45rem .8rem;border:none;border-radius:8px;background:#2b2f34;color:#fff}
+.pill{display:inline-block;padding:.18rem .55rem;border-radius:999px;font-weight:700;font-size:.9rem}
+.ok{background:#2b8a3e;color:#fff}.warn{background:#e67700;color:#fff}.bad{background:#c92a2a;color:#fff}
+.muted{opacity:.75}
