@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Load Planning</title>
+  <title>Loadmaster Pro — Load Planning</title>
   <!-- Uses your shared styles if present; safe to omit if you don't have styles.css -->
   <link rel="stylesheet" href="../styles.css" />
 </head>
@@ -183,7 +183,7 @@
       const lines = txt.split(/\r?\n/).map(s=>s.trim()).filter(Boolean).filter(s=>!s.startsWith('#'));
       const parsed = [];
       for(const line of lines){
-        const [wS,fS,aS] = line.split(',').map(s=>s.trim());
+        const [wS,fS,aS] = line.split(/,\s*/); // trims simple spaces after commas
         const w = Number(wS), f = Number(fS), a = Number(aS);
         if(Number.isFinite(w) && Number.isFinite(f) && Number.isFinite(a)) parsed.push({w,fwd:f,aft:a});
       }
