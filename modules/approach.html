@@ -1,69 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="../style.css" />
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loadmaster Pro: Approach Shoring</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loadmaster Pro — Approach Shoring</title>
+  <link rel="stylesheet" href="../styles.css"/>
 </head>
-<body class="light">
-  <!-- Home Button -->
-  <button class="back-button" onclick="goHome()">🏠 Home</button>
-
+<body>
+  <button class="home-button" onclick="goHome()">🏠 Home</button>
   <h1>Approach Shoring Calculator</h1>
-  <div class="mb-3">
-    <label for="overhang" class="form-label">Overhang (in)</label>
-    <input type="number" inputmode="numeric" id="overhang" class="form-control" />
+
+  <div class="section">
+    <label for="overhang">Overhang (in)</label>
+    <input type="number" id="overhang" inputmode="numeric" placeholder="e.g., 40"/>
+
+    <label for="clearance">Ground Clearance (in)</label>
+    <input type="number" id="clearance" inputmode="numeric" placeholder="e.g., 10"/>
+
+    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem">
+      <button onclick="calculateApproach()">Calculate</button>
+      <button onclick="clearApproach()">Clear All</button>
+    </div>
+
+    <div id="approachResult" style="margin-top:.8rem;"></div>
   </div>
-  <div class="mb-3">
-    <label for="clearance" class="form-label">Ground Clearance (in)</label>
-    <input type="number" inputmode="numeric" id="clearance" class="form-control" />
-  </div>
-  <button class="btn btn-primary" onclick="calculateApproach()">Calculate</button>
-  <button class="btn btn-secondary ms-2" onclick="clearApproach()">Clear All</button>
-  <div id="approachResult" class="mt-3"></div>
 
   <script>
-    function goHome() {
-      window.location.href = "../index.html";
-    }
+    function goHome(){ window.location.href = "../index.html"; }
 
     function calculateApproach() {
-      const overhang = parseFloat(document.getElementById('overhang').value);
-      const clearance = parseFloat(document.getElementById('clearance').value);
+      const overhangEl = document.getElementById('overhang');
+      const clearanceEl = document.getElementById('clearance');
+      const result = document.getElementById('approachResult');
 
-      if (isNaN(overhang) || isNaN(clearance) || clearance === 0) {
-        document.getElementById('approachResult').innerHTML =
-          '<span class="text-danger">Please enter valid numbers.</span>';
+      const overhang = parseFloat(overhangEl.value);
+      const clearance = parseFloat(clearanceEl.value);
+
+      if (isNaN(overhang) || isNaN(clearance) || clearance <= 0) {
+        result.innerHTML = `<span class="bad pill">Please enter valid numbers.</span>`;
         return;
       }
 
-      const ratio = +(overhang / clearance).toFixed(1);
+      // Ratio rounded to the nearest tenth (as per earlier rules)
+      const ratio = Math.round((overhang / clearance) * 10) / 10;
 
+      // Chart: key is the upper bound ratio; value is [height (in), length (in)]
       const chart = {
         3.6: [1, 15], 3.7: [1.5, 20], 3.8: [2, 20], 3.9: [3, 25], 4.0: [3, 25],
-        4.1: [3.75, 30], 4.2: [3.75, 30], 4.3: [4.5, 35], 4.4: [4.5, 35],
-        4.5: [5.25, 35], 4.6: [5.25, 40], 4.7: [6, 40], 4.8: [6, 40],
-        4.9: [6.75, 45], 5.0: [6.75, 45], 5.1: [7.5, 50], 5.2: [7.5, 50],
-        5.3: [7.5, 55], 5.4: [8.25, 60], 5.5: [8.25, 60], 5.6: [8.25, 60],
-        5.7: [9, 65], 5.8: [9, 65], 5.9: [9, 65]
+        4.1: [3.75, 30], 4.2: [3.75, 30], 4.3: [4.5, 35], 4.4: [4.5, 35], 4.5: [5.25, 35],
+        4.6: [5.25, 40], 4.7: [6, 40], 4.8: [6, 40], 4.9: [6.75, 45], 5.0: [6.75, 45],
+        5.1: [7.5, 50], 5.2: [7.5, 50], 5.3: [7.5, 55], 5.4: [8.25, 60], 5.5: [8.25, 60],
+        5.6: [8.25, 60], 5.7: [9, 65], 5.8: [9, 65], 5.9: [9, 65]
       };
 
-      let nearestRatio = Object.keys(chart).find(k => ratio <= parseFloat(k));
-      let result = `<strong>Ratio:</strong> ${ratio}<br/>`;
+      let html = `<div class="section"><strong>Ratio (Overhang / Clearance):</strong> ${ratio.toFixed(1)}</div>`;
 
       if (ratio <= 3.5) {
-        result += `<span class="text-success">Shoring is not required.</span>`;
-      } else if (nearestRatio) {
-        const [height, length] = chart[nearestRatio];
-        result += `<span class="text-warning">Shoring is required!</span><br/>`;
-        result += `<strong>Shoring Height:</strong> ${height}"<br/>`;
-        result += `<strong>Shoring Length:</strong> ${length}"`;
-      } else {
-        result += `<span class="text-danger">Ratio exceeds chart limits. Refer to TO guidance.</span>`;
+        html += `<div class="section"><span class="ok pill">Shoring is not required.</span></div>`;
+        result.innerHTML = html;
+        return;
       }
 
-      document.getElementById('approachResult').innerHTML = result;
+      const keys = Object.keys(chart).map(Number).sort((a,b)=>a-b);
+      const key = keys.find(k => ratio <= k);
+
+      if (key !== undefined) {
+        const [height, length] = chart[key];
+        html += `
+          <div class="section">
+            <span class="warn pill">Shoring is required</span><br/>
+            <strong>Recommended Shoring Height:</strong> ${height}"<br/>
+            <strong>Recommended Shoring Length:</strong> ${length}"
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="section">
+            <span class="bad pill">Ratio exceeds chart limits.</span><br/>
+            Refer to TO guidance for additional procedures.
+          </div>
+        `;
+      }
+
+      result.innerHTML = html;
     }
 
     function clearApproach() {
@@ -74,3 +93,4 @@
   </script>
 </body>
 </html>
+
