@@ -6,31 +6,6 @@
   <title>Load Planning</title>
   <!-- Uses your shared styles if present; safe to omit if you don't have styles.css -->
   <link rel="stylesheet" href="../styles.css" />
-  <style>
-    :root {
-      --bg: #121212; --text:#e0e0e0; --card:#1e1e1e; --pri:#1f6f8b;
-    }
-    body { background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, Arial, sans-serif; margin:0; padding:16px; }
-    h1,h3,h4 { margin: .25rem 0 .5rem; }
-    .home-button { margin-bottom: .75rem; padding:.45rem .8rem; border:none; border-radius:8px; background:#2b2f34; color:#fff; cursor:pointer; }
-    .section { background: var(--card); border-left: 4px solid var(--pri); border-radius: 10px; padding: 14px; margin-top: 12px; }
-    .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid-3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-    label { display:block; font-weight:600; margin-bottom:4px; }
-    input[type="text"], textarea { width:100%; padding:.6rem .65rem; border-radius:8px; border:1px solid #444; background:#1b1b1b; color:var(--text); }
-    textarea { min-height:120px; }
-    button { padding:.5rem .8rem; border-radius:8px; border:1px solid #3b4854; background:#2a3540; color:#fff; cursor:pointer; }
-    button:hover { filter:brightness(1.1); }
-    table { width:100%; border-collapse:collapse; margin-top:.5rem; }
-    th,td { padding:.5rem; text-align:center; border-bottom:1px solid #3a3a3a; }
-    th { background:#222; }
-    .row-actions button { padding:.35rem .55rem; }
-    .pill { display:inline-block; padding:.18rem .55rem; border-radius:999px; font-weight:700; font-size:.9rem; }
-    .ok { background:#2b8a3e; color:#fff; }
-    .warn { background:#e67700; color:#fff; }
-    .bad { background:#c92a2a; color:#fff; }
-    .muted { opacity:.75; }
-  </style>
 </head>
 <body>
   <button onclick="goHome()" class="home-button">🏠 Home</button>
