@@ -65,3 +65,58 @@ button:hover {
   cursor: pointer;
   font-weight: bold;
 }
+/* --- Layout grids --- */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .8rem;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .8rem;
+}
+@media (max-width: 640px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* --- Table styling --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: .5rem;
+  background: #111111;
+  color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+thead th {
+  text-align: left;
+  background: #0c0c0c;
+  color: #ffffff;
+  border-bottom: 2px solid #00308F;
+  padding: .6rem;
+  font-weight: 700;
+}
+tbody td, tfoot th, tfoot td {
+  border-bottom: 1px solid #1f1f1f;
+  padding: .55rem .6rem;
+}
+tbody tr:hover { background: #151515; }
+tfoot th, tfoot td {
+  background: #0f0f0f;
+  font-weight: 700;
+}
+
+/* --- Pills / badges (you already use these in JS) --- */
+.pill{display:inline-block;padding:.18rem .55rem;border-radius:999px;font-weight:700;font-size:.9rem}
+.ok{background:#2b8a3e;color:#fff}
+.warn{background:#e67700;color:#fff}
+.bad{background:#c92a2a;color:#fff}
+.muted{opacity:.8}
+
+/* --- Inputs inside table cells look nicer full-width --- */
+td input[type="text"]{
+  width: 100%;
+  box-sizing: border-box;
+}
