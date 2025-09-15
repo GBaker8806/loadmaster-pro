@@ -1,68 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="stylesheet" href="../styles.css" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Winching Calculator</title>
-  <style>
-    :root {
-      --highlight-color: #3e8eaa;
-      --bg-color: #121212;
-      --primary-color: #1f6f8b;
-      --accent-color: #99e1d9;
-      --text-color: #e0e0e0;
-      --card-color: #1e1e1e;
-      --danger: #ff5c5c;
-      --ok: #66d17a;
-      --warn: #ffd166;
-    }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      padding: 1rem;
-    }
-    select, input, button {
-      width: 100%;
-      padding: 0.75rem;
-      margin-top: 0.5rem;
-      border-radius: 8px;
-      border: 1px solid #444;
-      font-size: 1rem;
-      background-color: #2a2a2a;
-      color: var(--text-color);
-      box-sizing: border-box;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-      margin-bottom: 0.25rem;
-      font-weight: 500;
-    }
-    button {
-      background-color: var(--primary-color);
-      color: #fff;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-      cursor: pointer;
-    }
-    button:hover { background-color: var(--highlight-color); }
-
-    #winchResult {
-      margin-top: 1rem;
-      padding: 1rem;
-      background-color: var(--card-color);
-      border-left: 4px solid var(--primary-color);
-      border-radius: 8px;
-      white-space: pre-line;
-      font-weight: bold;
-    }
-    .tag { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 6px; font-weight: 700; }
-    .pass { background: var(--ok); color: #032b11; }
-    .fail { background: var(--danger); color: white; }
-    .note { color: #ddd; font-weight: normal; }
-  </style>
 </head>
 <body>
   <h2>Winching Calculator</h2>
