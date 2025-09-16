@@ -1,193 +1,216 @@
-:root {
-  --af-blue: #00308F;
-  --text-color: #ffffff;
-  --bg-color: #000000;
+/* ===============================
+   Loadmaster Pro - Global Styles
+   Theme: Black bg, Air Force blue, white text
+   =============================== */
+
+:root{
+  --af-blue: #1f6f8b;      /* Air Force blue accent */
+  --af-blue-strong:#195a70;
+  --bg: #0b0f12;           /* near-black background */
+  --card: #131922;         /* card panel */
+  --card-2: #17202b;
+  --text: #e8edf3;         /* primary text (white-ish) */
+  --muted: #a9b6c4;        /* secondary text */
+  --ok: #18a558;
+  --warn: #ffb020;
+  --bad: #db4455;
+  --border: #25303b;
+  --shadow: 0 6px 18px rgba(0,0,0,.35);
 }
 
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  margin: 0;
-  padding: 1rem;
+* { box-sizing: border-box; }
+html,body { margin:0; padding:0; }
+
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  line-height: 1.4;
+  padding: 16px;
 }
 
-h1, h2 {
-  color: var(--text-color);
-}
-
-label {
-  font-weight: bold;
-}
-
-input, select, button {
-  width: 100%;
-  padding: 0.6rem;
-  margin: 0.4rem 0;
-  border-radius: 6px;
-  border: 1px solid var(--af-blue);
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-input, select {
-  background-color: #111111;
-  color: var(--text-color);
-}
-
-button {
-  background-color: var(--af-blue);
-  color: var(--text-color);
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #0050d4; /* lighter AF blue for hover */
-}
-
-.section {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #111111;
-  border-left: 4px solid var(--af-blue);
-  border-radius: 6px;
-}
-
-.home-button {
-  background-color: var(--af-blue);
-  color: var(--text-color);
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 1rem;
-  margin-bottom: 1rem;
-  cursor: pointer;
-  font-weight: bold;
-}
-/* --- Layout grids --- */
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: .8rem;
-}
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: .8rem;
-}
-@media (max-width: 640px) {
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
-}
-
-/* --- Table styling --- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: .5rem;
-  background: #111111;
-  color: #ffffff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-thead th {
-  text-align: left;
-  background: #0c0c0c;
-  color: #ffffff;
-  border-bottom: 2px solid #00308F;
-  padding: .6rem;
+/* Headings */
+h1,h2,h3{
+  margin: 0 0 12px;
   font-weight: 700;
+  color: var(--text);
 }
-tbody td, tfoot th, tfoot td {
-  border-bottom: 1px solid #1f1f1f;
-  padding: .55rem .6rem;
-}
-tbody tr:hover { background: #151515; }
-tfoot th, tfoot td {
-  background: #0f0f0f;
-  font-weight: 700;
-}
+h1{ font-size: 1.75rem; text-align:center; }
 
-/* --- Pills / badges (you already use these in JS) --- */
-.pill{display:inline-block;padding:.18rem .55rem;border-radius:999px;font-weight:700;font-size:.9rem}
-.ok{background:#2b8a3e;color:#fff}
-.warn{background:#e67700;color:#fff}
-.bad{background:#c92a2a;color:#fff}
-.muted{opacity:.8}
+/* Layout helpers */
+.section{ 
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin: 14px 0;
+  box-shadow: var(--shadow);
+}
+.grid-2{ display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+.grid-3{ display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+.center{ text-align:center; }
+.mt-1{ margin-top:.5rem; } .mt-2{ margin-top:1rem; }
+.mb-1{ margin-bottom:.5rem; } .mb-2{ margin-bottom:1rem; }
+.divider{ border:0; border-top:1px solid var(--border); margin:24px 0; }
 
-/* --- Inputs inside table cells look nicer full-width --- */
-td input[type="text"]{
+/* Inputs & selects */
+input, select, textarea, button{
+  font: inherit;
+}
+.form-control, input[type="text"], input[type="number"], select, textarea{
   width: 100%;
-  box-sizing: border-box;
+  background: var(--card-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.form-control::placeholder{ color: var(--muted); }
+.form-control:focus, input:focus, select:focus, textarea:focus{
+  border-color: var(--af-blue);
+  box-shadow: 0 0 0 3px rgba(31,111,139,.25);
 }
 
-.module-icon-img { width: 64px; height: 64px; object-fit: contain; }
+/* Buttons */
+button{
+  display:inline-block;
+  background: var(--af-blue);
+  color: #fff;
+  border: 1px solid var(--af-blue-strong);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform .05s ease, background .2s ease, box-shadow .2s ease;
+}
+button:hover{ background: var(--af-blue-strong); }
+button:active{ transform: translateY(1px); }
+
+.btn-primary{ background: var(--af-blue); border-color: var(--af-blue-strong); }
+.btn-secondary{ background: var(--card-2); border-color: var(--border); color: var(--text); }
+.btn-danger{ background: var(--bad); border-color: #a82f3d; }
+.btn-outline{
+  background: transparent;
+  color: var(--af-blue);
+  border: 2px solid var(--af-blue);
+}
+.btn-outline.active{
+  background: var(--af-blue);
+  color: #fff;
 }
 
-/* Grid + tiles */
-.icon-grid {
+/* Home button (top-left on modules) */
+.home-button, .back-button{
+  position: sticky;
+  top: 8px;
+  background: var(--af-blue);
+  color: #fff;
+  border: 1px solid var(--af-blue-strong);
+  border-radius: 999px;
+  padding: 8px 14px;
+  box-shadow: var(--shadow);
+  z-index: 2;
+}
+
+/* Cards / results */
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+  white-space: pre-line;
+}
+
+/* Tags for status */
+.tag{
+  display:inline-block;
+  font-size: .85rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card-2);
+  color: var(--text);
+}
+.tag.pass{ background: rgba(24,165,88,.15); color: #bdf3d2; border-color: rgba(24,165,88,.35); }
+.tag.fail{ background: rgba(219,68,85,.15); color: #ffd1d7; border-color: rgba(219,68,85,.35); }
+.pill{ @apply .tag; }            /* if you copy text that uses .pill from older files */
+.pill.ok{ background: rgba(24,165,88,.15); color:#bdf3d2; border-color: rgba(24,165,88,.35);}
+.pill.warn{ background: rgba(255,176,32,.15); color:#ffe2b5; border-color: rgba(255,176,32,.35);}
+.pill.bad{ background: rgba(219,68,85,.15); color:#ffd1d7; border-color: rgba(219,68,85,.35);}
+
+/* Muted helper */
+.muted{ color: var(--muted); }
+
+/* Home screen grid & icons */
+.icon-grid{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 16px;
-  margin: 16px;
+  gap: 14px;
+  margin-top: 18px;
 }
-
-.module-tile {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  background: #0b0f17;           /* black-ish */
-  border: 1px solid #1f2a44;      /* Air Force blue border */
+.module-icon{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 16px;
-  text-align: center;
-  transition: transform .08s ease, background .2s ease, border-color .2s ease;
+  padding: 16px 12px;
+  box-shadow: var(--shadow);
+  transition: transform .08s ease, background .2s ease, border .2s ease;
+  cursor: pointer;
 }
-
-.module-tile:hover, .module-tile:focus {
-  outline: none;
-  transform: translateY(-2px);
-  background: #101829;
-  border-color: #2d4e8a;          /* brighter AF blue */
-}
-
-/* Icon images constrained */
-.module-icon-img {
-  width: 80px;
-  height: 80px;
+.module-icon:hover{ transform: translateY(-2px); border-color: var(--af-blue); }
+.module-icon-img{
+  width: 64px; height: 64px;
   object-fit: contain;
   display: block;
-  margin: 8px auto 12px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
+}
+.module-icon .emoji{ font-size: 2.25rem; line-height: 1; }
+.icon-label{ color: var(--text); font-weight: 700; text-align:center; }
+
+/* Tables (Load Planning) */
+table{
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+thead th{
+  background: #0e141c;
+  color: var(--text);
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+tbody td, tfoot td, tfoot th{
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+tbody tr:hover{ background: rgba(255,255,255,.03); }
+
+/* Textarea (envelope CSV) */
+textarea{
+  min-height: 120px;
+  resize: vertical;
 }
 
-/* Title */
-h1 {
-  margin: 12px 16px;
-  color: #cfe3ff;                 /* AF blue tint */
-  font-weight: 700;
+/* Utility to constrain module width on large screens */
+.container{
+  max-width: 920px;
+  margin: 0 auto;
 }
 
-/* Dark base */
-body {
-  background: #000;
-  color: #fff;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+/* Make buttons/inputs tappable on mobile */
+@media (hover:none){
+  button{ padding: 12px 16px; }
+  .form-control{ padding: 12px 14px; }
 }
-
-/* Home / Back button — consistent everywhere */
-.back-button {
-  position: sticky;       /* stays at top as you scroll */
-  top: 0;
-  z-index: 1000;
-  display: inline-block;
-  margin: 0 0 1rem 0;
-  padding: .55rem .9rem;
-  border: none;
-  border-radius: 10px;
-  background: #1f6f8b;    /* AF blue vibe used elsewhere */
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,.25);
-}
-.back-button:hover { background:#3e8eaa; }
