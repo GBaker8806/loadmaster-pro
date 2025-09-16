@@ -1,56 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="styles.css" />  
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.PNG">
-<meta name="theme-color" content="#1f6f8b">
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Loadmaster Pro</title>
+
+  <!-- Theme & PWA -->
+  <meta name="theme-color" content="#00308F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Icons (ensure files exist and case matches exactly) -->
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192">
+  <link rel="icon" href="icons/icon-512.png" sizes="512x512">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <h1>Loadmaster Pro</h1>
-  <div class="icon-grid">
-  <div class="module-icon" onclick="navigate('modules/restraint.html')">
-    <img src="icons/restraint-icon.png" alt="Restraint" class="module-icon-img" />
-    <div class="icon-label">Restraint</div>
+
+  <div class="icon-grid" id="modules">
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/restraint.html" aria-label="Restraint">
+      <img src="icons/restraint-icon.png" alt="" class="module-icon-img" />
+      <div class="icon-label">Restraint</div>
+    </div>
+
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/loadshift.html" aria-label="Load Shift">
+      <img src="icons/loadshift-icon.png" alt="" class="module-icon-img" />
+      <div class="icon-label">Load Shift</div>
+    </div>
+
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/winching.html" aria-label="Winching">
+      <img src="icons/winching-icon.png" alt="" class="module-icon-img" />
+      <div class="icon-label">Winching</div>
+    </div>
+
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/tires_over_100psi.html" aria-label="Tires over 100 PSI">
+      <img src="icons/tires_over_100psi-icon.png" alt="" class="module-icon-img" />
+      <div class="icon-label">Tires &gt; 100 PSI</div>
+    </div>
+
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/vehiclecg.html" aria-label="Vehicle CG">
+      <img src="icons/vehiclecg-icon.png" alt="" class="module-icon-img" />
+      <div class="icon-label">Vehicle CG</div>
+    </div>
+
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/sleeper.html" aria-label="Sleeper Shoring">
+      <img src="icons/sleeper-icon.png" alt="" class="module-icon-img" />
+      <div class="icon-label">Sleeper Shoring</div>
+    </div>
+
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/approach.html" aria-label="Approach Shoring">
+      <img src="icons/approach-icon.png" alt="" class="module-icon-img" />
+      <div class="icon-label">Approach Shoring</div>
+    </div>
+
+    <div class="module-icon" role="button" tabindex="0" data-path="modules/load_planning.html" aria-label="Load Planning">
+      <div style="font-size: 2rem">🧮</div>
+      <div class="icon-label">Load Planning</div>
+    </div>
   </div>
-  <div class="module-icon" onclick="navigate('modules/loadshift.html')">
-    <img src="icons/loadshift-icon.png" alt="Load Shift" class="module-icon-img" />
-    <div class="icon-label">Load Shift</div>
-  </div>
-  <div class="module-icon" onclick="navigate('modules/winching.html')">
-    <img src="icons/winching-icon.png" alt="Winching" class="module-icon-img" />
-    <div class="icon-label">Winching</div>
-  </div>
-  <div class="module-icon" onclick="navigate('modules/tires_over_100psi.html')">
-    <img src="icons/tires_over_100psi-icon.png" alt="Tires > 100 PSI" class="module-icon-img" />
-    <div class="icon-label">Tires > 100 PSI</div>
-  </div>
-  <div class="module-icon" onclick="navigate('modules/vehiclecg.html')">
-    <img src="icons/vehiclecg-icon.png" alt="Vehicle CG" class="module-icon-img" />
-    <div class="icon-label">Vehicle CG</div>
-  </div>
-  <div class="module-icon" onclick="navigate('modules/sleeper.html')">
-    <img src="icons/sleeper-icon.png" alt="Sleeper Shoring" class="module-icon-img" />
-    <div class="icon-label">Sleeper Shoring</div>
-  </div>
-  <div class="module-icon" onclick="navigate('modules/approach.html')">
-    <img src="icons/approach-icon.png" alt="Approach Shoring" class="module-icon-img" />
-    <div class="icon-label">Approach Shoring</div>
-  </div>
-  <div class="module-icon" onclick="navigate('modules/load_planning.html')">
-    <div style="font-size: 2rem">🧮</div>
-    <div class="icon-label">Load Planning</div>
-  </div>
-</div>
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(reg => console.log("Service Worker registered", reg))
-      .catch(err => console.error("Service Worker registration failed", err));
-  }
-</script>
+
+  <script>
+    // SPA-like navigation for tiles (click or Enter/Space)
+    function navigate(path) {
+      window.location.href = path;
+    }
+
+    const grid = document.getElementById('modules');
+    grid.addEventListener('click', (e) => {
+      const tile = e.target.closest('.module-icon');
+      if (!tile) return;
+      const path = tile.getAttribute('data-path');
+      if (path) navigate(path);
+    });
+
+    grid.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const tile = e.target.closest('.module-icon');
+        if (!tile) return;
+        e.preventDefault();
+        const path = tile.getAttribute('data-path');
+        if (path) navigate(path);
+      }
+    });
+
+    // PWA service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registered', reg.scope))
+        .catch(err => console.error('Service Worker registration failed', err));
+    }
+  </script>
 </body>
 </html>
