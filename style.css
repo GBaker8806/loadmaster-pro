@@ -120,3 +120,4 @@ td input[type="text"]{
   width: 100%;
   box-sizing: border-box;
 }
+.module-icon-img { width: 64px; height: 64px; object-fit: contain; }
