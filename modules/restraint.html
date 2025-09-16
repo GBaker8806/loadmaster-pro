@@ -9,20 +9,18 @@
 </head>
 <body>
   <button onclick="goHome()" class="home-button">🏠 Home</button>
-  <script>
-function goHome() {
-  window.location.href = "../index.html"; // Adjust path if needed
-}
-</script>
+
   <h1>Restraint Calculator</h1>
 
   <label for="cargoWeight">Cargo Weight (lbs):</label>
-  <input 
-  inputmode="numeric" 
-  pattern="[0-9]*" 
-  class="form-control" 
-  id="cargoWeight" placeholder="e.g., 12000"
-/>
+  <input
+    inputmode="numeric"
+    pattern="[0-9]*"
+    class="form-control"
+    id="cargoWeight"
+    placeholder="e.g., 12000"
+  />
+
   <button onclick="calculateRestraint()">Calculate Required Restraint</button>
   <div id="result"></div>
 
@@ -31,28 +29,54 @@ function goHome() {
   <h2>Actual Restraint Calculator</h2>
 
   <label for="restraintDirection">Direction:</label>
-  <select id="restraintDirection">
+  <select id="restraintDirection" onchange="toggleAngleInputs()">
     <option value="FWD">FWD</option>
     <option value="AFT">AFT</option>
     <option value="LAT">LAT</option>
     <option value="VERT">VERT</option>
   </select>
 
+  <!-- LAT-only angle inputs (hidden unless Direction = LAT) -->
+  <div id="angleInputs" style="display:none; margin-top: .75rem;">
+    <label for="leftAngle">Left Lateral Angle (deg):</label>
+    <input
+      inputmode="decimal"
+      pattern="[0-9.]*"
+      class="form-control"
+      id="leftAngle"
+      placeholder="e.g., 30"
+    />
+    <label for="rightAngle">Right Lateral Angle (deg):</label>
+    <input
+      inputmode="decimal"
+      pattern="[0-9.]*"
+      class="form-control"
+      id="rightAngle"
+      placeholder="e.g., 30"
+    />
+    <p class="muted" style="margin-top:.25rem">
+      LAT restraint is computed as the sum of the left/right components:
+      <code>component = base × cos(angle)</code>
+    </p>
+  </div>
+
   <label for="actualLength">Actual Length (in):</label>
   <input
-  inputmode="numeric" 
-  pattern="[0-9]*" 
-  class="form-control"
-  id="actualLength" placeholder="e.g., 100" 
-/>
+    inputmode="numeric"
+    pattern="[0-9]*"
+    class="form-control"
+    id="actualLength"
+    placeholder="e.g., 100"
+  />
 
   <label for="effectiveLength">Effective Length (in):</label>
   <input
-  inputmode="numeric" 
-  pattern="[0-9]*" 
-  class="form-control"
-  id="effectiveLength" placeholder="e.g., 80" 
-/>
+    inputmode="numeric"
+    pattern="[0-9]*"
+    class="form-control"
+    id="effectiveLength"
+    placeholder="e.g., 80"
+  />
 
   <label for="restraintFactor">Restraint Factor:</label>
   <select id="restraintFactor">
@@ -66,102 +90,115 @@ function goHome() {
   </div>
 
   <button onclick="calculateActualRestraint()">Calculate Actual Restraint</button>
-
   <button onclick="clearAll()" style="margin-top: 2rem; background-color: #b44444;">Clear All</button>
 
   <script>
-   let requiredRestraint = {};
-let totalRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
-let requiredText = "";
-let doubleMultiplier = false;
+    // Home helper (kept in case common.js isn't loaded for some reason)
+    function goHome() { window.location.href = "../index.html"; }
 
-function toggleMultiplier() {
-  doubleMultiplier = !doubleMultiplier;
-  const btn = document.getElementById("multiplierToggle");
-  btn.innerText = doubleMultiplier ? "×2 ON" : "×2 OFF";
-  btn.classList.toggle("active", doubleMultiplier);
-}
+    let requiredRestraint = {};
+    let totalRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
+    let requiredText = "";
+    let doubleMultiplier = false;
 
-function toggleAngleInputs() {
-  const direction = document.getElementById("restraintDirection").value;
-  document.getElementById("angleInputs").style.display = direction === "LAT" ? "block" : "none";
-}
+    function toggleMultiplier() {
+      doubleMultiplier = !doubleMultiplier;
+      const btn = document.getElementById("multiplierToggle");
+      btn.innerText = doubleMultiplier ? "×2 ON" : "×2 OFF";
+      btn.classList.toggle("active", doubleMultiplier);
+    }
 
-function displayTotals(baseText) {
-  let result = baseText + `\n\nCurrent Actual Totals:`;
-  for (const dir in totalRestraint) {
-    result += `   ${dir}: ${totalRestraint[dir]} lbs   |`;
-  }
-  return result.slice(0, -1);
-}
+    function toggleAngleInputs() {
+      const direction = document.getElementById("restraintDirection").value;
+      const box = document.getElementById("angleInputs");
+      if (box) box.style.display = (direction === "LAT") ? "block" : "none";
+    }
 
-function calculateRestraint() {
-  const weight = parseFloat(document.getElementById("cargoWeight").value);
-  if (isNaN(weight) || weight <= 0) {
-    document.getElementById("result").innerText = "Enter a valid cargo weight.";
-    return;
-  }
-  const gForces = { FWD: 3.0, AFT: 1.5, LAT: 1.5, VERT: 2.0 };
-  requiredRestraint = {};
-  requiredText = `Required Restraint Forces for ${weight} lbs:`;
-  for (const dir in gForces) {
-    const force = Math.round(weight * gForces[dir]);
-    requiredRestraint[dir] = force;
-    requiredText += `\n${dir}: ${force} lbs`;
-  }
-  document.getElementById("result").innerText = displayTotals(requiredText);
-}
+    function displayTotals(baseText) {
+      let result = (baseText || "") + (baseText ? "\n\n" : "") + "Current Actual Totals:";
+      for (const dir in totalRestraint) {
+        result += `   ${dir}: ${totalRestraint[dir]} lbs   |`;
+      }
+      return result.slice(0, -1);
+    }
 
-function calculateActualRestraint() {
-  const actual = parseFloat(document.getElementById("actualLength").value);
-  const effective = parseFloat(document.getElementById("effectiveLength").value);
-  const factor = parseFloat(document.getElementById("restraintFactor").value);
-  const direction = document.getElementById("restraintDirection").value;
+    function calculateRestraint() {
+      const weight = parseFloat(document.getElementById("cargoWeight").value);
+      if (isNaN(weight) || weight <= 0) {
+        document.getElementById("result").innerText = "Enter a valid cargo weight.";
+        return;
+      }
+      const gForces = { FWD: 3.0, AFT: 1.5, LAT: 1.5, VERT: 2.0 };
+      requiredRestraint = {};
+      requiredText = `Required Restraint Forces for ${weight} lbs:`;
+      for (const dir in gForces) {
+        const force = Math.round(weight * gForces[dir]);
+        requiredRestraint[dir] = force;
+        requiredText += `\n${dir}: ${force} lbs`;
+      }
+      document.getElementById("result").innerText = displayTotals(requiredText);
+    }
 
-  if (isNaN(actual) || actual <= 0 || isNaN(effective) || effective <= 0) {
-    document.getElementById("result").innerText += `\n\n⚠️ Enter valid actual and effective lengths.`;
-    return;
-  }
+    function calculateActualRestraint() {
+      const actual = parseFloat(document.getElementById("actualLength").value);
+      const effective = parseFloat(document.getElementById("effectiveLength").value);
+      const factor = parseFloat(document.getElementById("restraintFactor").value);
+      const direction = document.getElementById("restraintDirection").value;
 
-  let baseRestraint = (effective / actual) * factor;
-  if (doubleMultiplier) baseRestraint *= 2;
+      if (isNaN(actual) || actual <= 0 || isNaN(effective) || effective <= 0) {
+        document.getElementById("result").innerText += `\n\n⚠️ Enter valid actual and effective lengths.`;
+        return;
+      }
 
-  let total = 0;
-  if (direction === "LAT") {
-    const left = parseFloat(document.getElementById("leftAngle").value);
-    const right = parseFloat(document.getElementById("rightAngle").value);
-    if (!isNaN(left)) total += baseRestraint * Math.cos(left * Math.PI / 180);
-    if (!isNaN(right)) total += baseRestraint * Math.cos(right * Math.PI / 180);
-  } else {
-    total = baseRestraint;
-  }
+      let baseRestraint = (effective / actual) * factor;
+      if (doubleMultiplier) baseRestraint *= 2;
 
-  totalRestraint[direction] += Math.round(total);
-  document.getElementById("result").innerText = displayTotals(requiredText || "Current Actual Totals:");
-}
+      let total = 0;
+      if (direction === "LAT") {
+        // Safe lookup of optional angle inputs
+        const leftEl = document.getElementById("leftAngle");
+        const rightEl = document.getElementById("rightAngle");
+        const left = leftEl ? parseFloat(leftEl.value) : NaN;
+        const right = rightEl ? parseFloat(rightEl.value) : NaN;
 
-function clearAll() {
-  document.getElementById("cargoWeight").value = "";
-  document.getElementById("actualLength").value = "";
-  document.getElementById("effectiveLength").value = "";
-  document.getElementById("restraintFactor").value = "10000";
-  document.getElementById("restraintDirection").value = "FWD";
-  document.getElementById("leftAngle").value = "";
-  document.getElementById("rightAngle").value = "";
-  document.getElementById("angleInputs").style.display = "none";
+        if (!isNaN(left))  total += baseRestraint * Math.cos((left  * Math.PI) / 180);
+        if (!isNaN(right)) total += baseRestraint * Math.cos((right * Math.PI) / 180);
+      } else {
+        total = baseRestraint;
+      }
 
-  totalRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
-  requiredRestraint = {};
-  requiredText = "";
-  doubleMultiplier = false;
+      totalRestraint[direction] += Math.round(total);
+      document.getElementById("result").innerText = displayTotals(requiredText || "");
+    }
 
-  const btn = document.getElementById("multiplierToggle");
-  btn.innerText = "×2 OFF";
-  btn.classList.remove("active");
+    function clearAll() {
+      document.getElementById("cargoWeight").value = "";
+      document.getElementById("actualLength").value = "";
+      document.getElementById("effectiveLength").value = "";
+      document.getElementById("restraintFactor").value = "10000";
+      document.getElementById("restraintDirection").value = "FWD";
 
-  document.getElementById("result").innerText = "";
-}
+      const leftEl = document.getElementById("leftAngle");
+      const rightEl = document.getElementById("rightAngle");
+      if (leftEl) leftEl.value = "";
+      if (rightEl) rightEl.value = "";
 
+      toggleAngleInputs();
+
+      totalRestraint = { FWD: 0, AFT: 0, LAT: 0, VERT: 0 };
+      requiredRestraint = {};
+      requiredText = "";
+      doubleMultiplier = false;
+
+      const btn = document.getElementById("multiplierToggle");
+      btn.innerText = "×2 OFF";
+      btn.classList.remove("active");
+
+      document.getElementById("result").innerText = "";
+    }
+
+    // Initialize UI state on load
+    document.addEventListener("DOMContentLoaded", toggleAngleInputs);
   </script>
 </body>
 </html>
