@@ -1,16 +1,18 @@
-/* ===============================
-   Loadmaster Pro - Global Styles
-   Theme: Black bg, Air Force blue, white text
-   =============================== */
+/* =========================================
+   Loadmaster Pro - Military Theme Styles
+   Black bg • Air Force blue • White text
+   Block-letter headings (Oswald) + mono numbers
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Roboto+Mono:wght@400;500;700&display=swap');
 
 :root{
-  --af-blue: #1f6f8b;      /* Air Force blue accent */
-  --af-blue-strong:#195a70;
-  --bg: #0b0f12;           /* near-black background */
-  --card: #131922;         /* card panel */
-  --card-2: #17202b;
-  --text: #e8edf3;         /* primary text (white-ish) */
-  --muted: #a9b6c4;        /* secondary text */
+  --af-blue: #1f6f8b;      /* Air Force blue (primary) */
+  --af-blue-strong:#195a70;/* darker variant */
+  --bg: #0a0d10;           /* near-black background */
+  --card: #121821;         /* panel/card background */
+  --card-2: #17212b;       /* input background */
+  --text: #eef4fa;         /* main text */
+  --muted: #a8b5c3;        /* secondary text */
   --ok: #18a558;
   --warn: #ffb020;
   --bad: #db4455;
@@ -21,48 +23,71 @@
 * { box-sizing: border-box; }
 html,body { margin:0; padding:0; }
 
+/* Base */
 body{
   background: var(--bg);
   color: var(--text);
-  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
-  line-height: 1.4;
+  font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  line-height: 1.45;
   padding: 16px;
 }
 
-/* Headings */
+/* Headings use block-letter look */
 h1,h2,h3{
   margin: 0 0 12px;
   font-weight: 700;
+  font-family: "Oswald", Arial, sans-serif;
+  letter-spacing: .5px;
   color: var(--text);
+  text-transform: uppercase;
 }
-h1{ font-size: 1.75rem; text-align:center; }
+h1{ font-size: 1.8rem; text-align:center; }
+h2{ font-size: 1.35rem; }
+h3{ font-size: 1.1rem; }
 
-/* Layout helpers */
+/* Labels look like stenciled headers */
+label{
+  display:block;
+  margin: 10px 0 6px;
+  color: var(--text);
+  font-family: "Oswald", Arial, sans-serif;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+}
+
+/* Panels / sections */
 .section{ 
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
   padding: 14px;
   margin: 14px 0;
   box-shadow: var(--shadow);
 }
+.card{
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+  white-space: pre-line;
+}
+.divider{ border:0; border-top:2px dashed var(--border); margin:24px 0; }
+
 .grid-2{ display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
 .grid-3{ display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
 .center{ text-align:center; }
 .mt-1{ margin-top:.5rem; } .mt-2{ margin-top:1rem; }
 .mb-1{ margin-bottom:.5rem; } .mb-2{ margin-bottom:1rem; }
-.divider{ border:0; border-top:1px solid var(--border); margin:24px 0; }
 
-/* Inputs & selects */
-input, select, textarea, button{
-  font: inherit;
-}
+/* Inputs */
+input, select, textarea, button{ font: inherit; }
 .form-control, input[type="text"], input[type="number"], select, textarea{
   width: 100%;
   background: var(--card-2);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
   padding: 10px 12px;
   outline: none;
   transition: border .2s ease, box-shadow .2s ease, background .2s ease;
@@ -73,79 +98,74 @@ input, select, textarea, button{
   box-shadow: 0 0 0 3px rgba(31,111,139,.25);
 }
 
-/* Buttons */
+/* Buttons (block-letter look) */
 button{
   display:inline-block;
   background: var(--af-blue);
   color: #fff;
-  border: 1px solid var(--af-blue-strong);
-  border-radius: 10px;
+  border: 2px solid #ffffff20;
+  border-radius: 6px;
   padding: 10px 14px;
   cursor: pointer;
   font-weight: 700;
+  font-family: "Oswald", Arial, sans-serif;
+  letter-spacing: .4px;
+  text-transform: uppercase;
   transition: transform .05s ease, background .2s ease, box-shadow .2s ease;
 }
-button:hover{ background: var(--af-blue-strong); }
+button:hover{ background: var(--af-blue-strong); box-shadow: 0 4px 14px rgba(31,111,139,.35); }
 button:active{ transform: translateY(1px); }
 
-.btn-primary{ background: var(--af-blue); border-color: var(--af-blue-strong); }
-.btn-secondary{ background: var(--card-2); border-color: var(--border); color: var(--text); }
+.btn-primary{ background: var(--af-blue); }
+.btn-secondary{ background: var(--card-2); color: var(--text); border-color: var(--border); }
 .btn-danger{ background: var(--bad); border-color: #a82f3d; }
 .btn-outline{
   background: transparent;
   color: var(--af-blue);
   border: 2px solid var(--af-blue);
 }
-.btn-outline.active{
-  background: var(--af-blue);
-  color: #fff;
-}
+.btn-outline.active{ background: var(--af-blue); color:#fff; }
 
-/* Home button (top-left on modules) */
+/* Home / Back button */
 .home-button, .back-button{
   position: sticky;
   top: 8px;
   background: var(--af-blue);
   color: #fff;
-  border: 1px solid var(--af-blue-strong);
+  border: 2px solid #ffffff20;
   border-radius: 999px;
   padding: 8px 14px;
   box-shadow: var(--shadow);
   z-index: 2;
 }
 
-/* Cards / results */
-.card{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: var(--shadow);
-  white-space: pre-line;
-}
-
-/* Tags for status */
+/* Status tags */
 .tag{
   display:inline-block;
   font-size: .85rem;
   font-weight: 800;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   background: var(--card-2);
   color: var(--text);
+  text-transform: uppercase;
+  font-family: "Oswald", Arial, sans-serif;
+  letter-spacing: .3px;
 }
-.tag.pass{ background: rgba(24,165,88,.15); color: #bdf3d2; border-color: rgba(24,165,88,.35); }
-.tag.fail{ background: rgba(219,68,85,.15); color: #ffd1d7; border-color: rgba(219,68,85,.35); }
-.pill{ @apply .tag; }            /* if you copy text that uses .pill from older files */
-.pill.ok{ background: rgba(24,165,88,.15); color:#bdf3d2; border-color: rgba(24,165,88,.35);}
-.pill.warn{ background: rgba(255,176,32,.15); color:#ffe2b5; border-color: rgba(255,176,32,.35);}
-.pill.bad{ background: rgba(219,68,85,.15); color:#ffd1d7; border-color: rgba(219,68,85,.35);}
+.tag.pass{ background: rgba(24,165,88,.12); color: #c7f5df; border-color: rgba(24,165,88,.45); }
+.tag.fail{ background: rgba(219,68,85,.12); color: #ffd6db; border-color: rgba(219,68,85,.45); }
+.pill{ /* legacy alias used by some modules */ @apply .tag; }
+.pill.ok{ background: rgba(24,165,88,.12); color:#c7f5df; border-color: rgba(24,165,88,.45);}
+.pill.warn{ background: rgba(255,176,32,.12); color:#ffe2b5; border-color: rgba(255,176,32,.45);}
+.pill.bad{ background: rgba(219,68,85,.12); color:#ffd6db; border-color: rgba(219,68,85,.45);}
 
 /* Muted helper */
-.muted{ color: var(--muted); }
+.muted{ color: var(--muted); font-size: .95rem; }
 
-/* Home screen grid & icons */
+/* ---------- Home screen grid & icons ----------
+   NOTE: You asked not to change module icons.
+   These rules keep the previous sizing/behavior. */
 .icon-grid{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -156,39 +176,49 @@ button:active{ transform: translateY(1px); }
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:10px;
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
   padding: 16px 12px;
   box-shadow: var(--shadow);
-  transition: transform .08s ease, background .2s ease, border .2s ease;
+  transition: transform .08s ease, border .2s ease;
   cursor: pointer;
 }
 .module-icon:hover{ transform: translateY(-2px); border-color: var(--af-blue); }
 .module-icon-img{
-  width: 64px; height: 64px;
+  width: 64px; height: 64px;      /* unchanged */
   object-fit: contain;
   display: block;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
 }
-.module-icon .emoji{ font-size: 2.25rem; line-height: 1; }
-.icon-label{ color: var(--text); font-weight: 700; text-align:center; }
+.module-icon .emoji{ font-size: 2.25rem; line-height: 1; } /* for emoji-only tiles */
+.icon-label{
+  color: var(--text);
+  font-weight: 700;
+  font-family: "Oswald", Arial, sans-serif;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  text-align:center;
+}
 
 /* Tables (Load Planning) */
 table{
   width: 100%;
   border-collapse: collapse;
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: var(--shadow);
 }
 thead th{
-  background: #0e141c;
+  background: #0f151d;
   color: var(--text);
   text-align: left;
   padding: 10px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
+  font-family: "Oswald", Arial, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .3px;
 }
 tbody td, tfoot td, tfoot th{
   padding: 10px;
@@ -198,18 +228,12 @@ tbody td, tfoot td, tfoot th{
 tbody tr:hover{ background: rgba(255,255,255,.03); }
 
 /* Textarea (envelope CSV) */
-textarea{
-  min-height: 120px;
-  resize: vertical;
-}
+textarea{ min-height: 120px; resize: vertical; }
 
-/* Utility to constrain module width on large screens */
-.container{
-  max-width: 920px;
-  margin: 0 auto;
-}
+/* Constrain module width on larger screens */
+.container{ max-width: 920px; margin: 0 auto; }
 
-/* Make buttons/inputs tappable on mobile */
+/* Mobile tap targets */
 @media (hover:none){
   button{ padding: 12px 16px; }
   .form-control{ padding: 12px 14px; }
