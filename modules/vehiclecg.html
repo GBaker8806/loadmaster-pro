@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,70 +8,58 @@
   <title>Vehicle CG Calculator</title>
 </head>
 <body>
-  <body>
   <button onclick="goHome()" class="home-button">🏠 Home</button>
-  <script>
-    function goHome(){ window.location.href = "../index.html"; }
-  </script>
-</body>
+
   <h1>Vehicle CG Calculator</h1>
 
   <label for="frontWeight">Weight on Front Axle (lbs)</label>
-  <input type="number" id="frontWeight" placeholder="e.g., 8000" />
+  <input type="number" id="frontWeight" placeholder="e.g., 8000" inputmode="numeric" pattern="[0-9]*" />
 
   <label for="rearWeight">Weight on Rear Axle (lbs)</label>
-  <input type="number" id="rearWeight" placeholder="e.g., 12000" />
+  <input type="number" id="rearWeight" placeholder="e.g., 12000" inputmode="numeric" pattern="[0-9]*" />
 
   <label for="wheelbase">Wheelbase (in)</label>
-  <input type="number" id="wheelbase" placeholder="e.g., 200" />
+  <input type="number" id="wheelbase" placeholder="e.g., 200" inputmode="decimal" pattern="[0-9.]*" />
 
-  <button onclick="calculateVehicleCG()">Calculate CG</button>
-  
-<div id="vehCgRoot">
-  <!-- all your Vehicle CG inputs/results live inside this container -->
-  <!-- ... -->
-  <button class="btn-danger" onclick="clearAllVehicleCG()">Clear All</button>
-  <div id="vehicleCgResult"></div>
-</div>
+  <div style="margin-top: 0.75rem; display: flex; gap: .5rem; flex-wrap: wrap;">
+    <button onclick="calculateVehicleCG()">Calculate CG</button>
+    <button class="btn-danger" onclick="clearAllVehicleCG()">Clear All</button>
+  </div>
 
+  <div id="vehicleCgResult" class="card" style="margin-top: 1rem;"></div>
 
   <script>
+    function goHome() { window.location.href = "../index.html"; }
+
     function calculateVehicleCG() {
       const front = parseFloat(document.getElementById('frontWeight').value);
       const rear = parseFloat(document.getElementById('rearWeight').value);
       const wheelbase = parseFloat(document.getElementById('wheelbase').value);
+      const out = document.getElementById('vehicleCgResult');
 
       if (isNaN(front) || isNaN(rear) || isNaN(wheelbase) || wheelbase <= 0) {
-        document.getElementById('cgResult').innerText = "Please enter valid numeric values for all fields.";
+        out.innerText = "Please enter valid numeric values for all fields.";
         return;
       }
 
       const totalWeight = front + rear;
-      const cgFromFront = (rear * wheelbase) / totalWeight;
+      const cgFromFront = (rear * wheelbase) / totalWeight; // CG inches aft of front axle
 
-      document.getElementById('cgResult').innerText =
+      out.innerText =
         `Total Weight: ${totalWeight.toLocaleString()} lbs\n` +
-        `CG Location: ${cgFromFront.toFixed(1)} in from front axle`;
+        `CG Location: ${cgFromFront.toFixed(1)} in aft of front axle`;
+    }
 
     function clearAllVehicleCG() {
-      const root = document.getElementById('vehCgRoot');
-      if (!root) return;
+      // Clear inputs
+      ['frontWeight','rearWeight','wheelbase'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
 
-       // Clear all inputs/selects/textarea inside this module only
-       root.querySelectorAll('input, select, textarea').forEach(el => {
-      if (el.tagName === 'SELECT') {
-       el.selectedIndex = 0;
-     } else if (el.type === 'checkbox' || el.type === 'radio') {
-      el.checked = false;
-     } else {
-      el.value = '';
-     }
-     });
-
-      // Clear common output areas inside this module
-      root.querySelectorAll('#vehicleCgResult, #result, #results, #calcOutput').forEach(el => {
-       el.innerHTML = '';
-     });
+      // Clear output
+      const out = document.getElementById('vehicleCgResult');
+      if (out) out.innerHTML = '';
     }
   </script>
 </body>
