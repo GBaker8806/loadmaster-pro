@@ -35,6 +35,7 @@
 
   <button onclick="calculateSleeperPSI()">Calculate</button>
   <button class="btn-danger" onclick="clearAllTiresOver100()">Clear All</button>
+  
   <div id="psiResult"></div>
 
   <script>
@@ -118,13 +119,22 @@
         <strong>I.</strong> On/Offload PIW ${offLimit ? '<span style="color:lightgreen">Within Limit</span>' : '<span style="color:#f66;">Exceeds Limit</span>'}
       `;
       
-      function clearAllTiresOver100(){
-      const ids = ['psiWeight','psiTires','psiLength','psiWidth'];
-      ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-      const type = document.getElementById('psiType');
-      if (type) type.selectedIndex = 0;
-      const out = document.getElementById('psiResult');
-      if (out) out.innerHTML = '';
+   function clearAllTiresOver100() {
+     // Inputs (IDs from your module)
+     const ids = ['psiWeight', 'psiTires', 'psiLength', 'psiWidth'];
+    ids.forEach(id => {
+     const el = document.getElementById(id);
+    if (el) el.value = '';
+   });
+
+    // Select
+    const type = document.getElementById('psiType');
+   if (type) type.selectedIndex = 0;
+
+    // Output
+    const out = document.getElementById('psiResult');
+   if (out) out.innerHTML = '';
+  
     } 
   </script>
 </body>
