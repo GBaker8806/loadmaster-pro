@@ -20,7 +20,7 @@
 
     <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem">
       <button onclick="calculateApproach()">Calculate</button>
-      <button class="btn-danger" onclick="clearAll()">Clear All</button>
+      <button class="btn-danger" onclick="clearAllApproach()">Clear All</button>
     </div>
 
     <div id="approachResult" style="margin-top:.8rem;"></div>
@@ -86,11 +86,15 @@
       result.innerHTML = html;
     }
 
-    function clearApproach() {
-      document.getElementById('overhang').value = '';
-      document.getElementById('clearance').value = '';
-      document.getElementById('approachResult').innerHTML = '';
-    }
+    function clearAllApproach(){
+     const over = document.getElementById('overhang');
+     const clr  = document.getElementById('clearance');
+     const out  = document.getElementById('approachResult');
+
+     if (over) over.value = '';
+     if (clr)  clr.value  = '';
+     if (out)  out.innerHTML = '';
+   }
   </script>
 </body>
 </html>
