@@ -30,7 +30,7 @@
 
     <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem">
       <button onclick="calculateLoadShift()">Calculate</button>
-      <button class="btn-danger" onclick="clearAll()">Clear All</button>
+      <button class="btn-danger" onclick="clearAllLoadShift()">Clear All</button>
     </div>
 
     <div id="loadShiftResult" style="margin-top: .8rem;"></div>
@@ -116,6 +116,13 @@
       ['shiftArm','shiftWeight','shiftGross','cgChange'].forEach(id => document.getElementById(id).value = '');
       document.getElementById('loadShiftResult').innerHTML = '';
     }
+
+    function clearAllLoadShift(){
+    const ids = ['shiftArm','shiftWeight','shiftGross','cgChange'];
+    ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    const out = document.getElementById('loadShiftResult');
+    if (out) out.innerHTML = '';
+  }
   </script>
 </body>
 </html>
