@@ -25,9 +25,14 @@
   <input type="number" id="wheelbase" placeholder="e.g., 200" />
 
   <button onclick="calculateVehicleCG()">Calculate CG</button>
+  
+<div id="vehCgRoot">
+  <!-- all your Vehicle CG inputs/results live inside this container -->
+  <!-- ... -->
   <button class="btn-danger" onclick="clearAllVehicleCG()">Clear All</button>
+  <div id="vehicleCgResult"></div>
+</div>
 
-  <div id="cgResult"></div>
 
   <script>
     function calculateVehicleCG() {
