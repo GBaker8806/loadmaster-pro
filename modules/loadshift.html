@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loadmaster Pro — Load Shift</title>
+  <link rel="stylesheet" href="../style.css" />
+  <script src="../common.js" defer></script>
+</head>
+<body>
+  <button class="home-button" onclick="goHome()">🏠 Home</button>
+  <h1>Load Shift Calculator</h1>
+
+  <div class="section">
+    <p class="muted" style="margin-top:0">
+      Leave <strong>exactly one</strong> field blank and press <em>Calculate</em>. The blank field will be solved.
+    </p>
+
+    <label for="shiftArm">Load Shift Arm (in)</label>
+    <input type="text" id="shiftArm" inputmode="decimal" pattern="[0-9.]*" placeholder="e.g., 120">
+
+    <label for="shiftWeight">Load Shift Weight (lbs)</label>
+    <input type="text" id="shiftWeight" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 5000">
+
+    <label for="shiftGross">Aircraft Gross Weight (lbs)</label>
+    <input type="text" id="shiftGross" inputmode="numeric" pattern="[0-9]*" placeholder="e.g., 400000">
+
+    <label for="cgChange">CG Change (in)</label>
+    <input type="text" id="cgChange" inputmode="decimal" pattern="[0-9.]*" placeholder="e.g., 1.7">
+
+    <div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.75rem">
+      <button onclick="calculateLoadShift()">Calculate</button>
+      <button class="btn-danger" onclick="clearAllLoadShift()">Clear All</button>
+    </div>
+
+    <div id="loadShiftResult" style="margin-top: .8rem;"></div>
+  </div>
+
+  
+</body>
+</html>
