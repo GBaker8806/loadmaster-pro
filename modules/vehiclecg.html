@@ -25,7 +25,7 @@
   <input type="number" id="wheelbase" placeholder="e.g., 200" />
 
   <button onclick="calculateVehicleCG()">Calculate CG</button>
-  <button class="btn-danger" onclick="clearAll()">Clear All</button>
+  <button class="btn-danger" onclick="clearAllVehicleCG()">Clear All</button>
 
   <div id="cgResult"></div>
 
@@ -46,6 +46,20 @@
       document.getElementById('cgResult').innerText =
         `Total Weight: ${totalWeight.toLocaleString()} lbs\n` +
         `CG Location: ${cgFromFront.toFixed(1)} in from front axle`;
+
+    function clearAllVehicleCG(){
+     // Clear all inputs/selects in this page
+     document.querySelectorAll('input, select, textarea').forEach(el => {
+     if (el.tagName === 'SELECT') el.selectedIndex = 0;
+     else if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+     else el.value = '';
+    });
+
+    // Clear common output fields you might have
+    ['vehicleCgResult','vehicleCgError','result','results','calcOutput'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+    });
     }
   </script>
 </body>
