@@ -52,19 +52,25 @@
         `Total Weight: ${totalWeight.toLocaleString()} lbs\n` +
         `CG Location: ${cgFromFront.toFixed(1)} in from front axle`;
 
-    function clearAllVehicleCG(){
-     // Clear all inputs/selects in this page
-     document.querySelectorAll('input, select, textarea').forEach(el => {
-     if (el.tagName === 'SELECT') el.selectedIndex = 0;
-     else if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
-     else el.value = '';
-    });
+    function clearAllVehicleCG() {
+      const root = document.getElementById('vehCgRoot');
+      if (!root) return;
 
-    // Clear common output fields you might have
-    ['vehicleCgResult','vehicleCgError','result','results','calcOutput'].forEach(id=>{
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = '';
-    });
+       // Clear all inputs/selects/textarea inside this module only
+       root.querySelectorAll('input, select, textarea').forEach(el => {
+      if (el.tagName === 'SELECT') {
+       el.selectedIndex = 0;
+     } else if (el.type === 'checkbox' || el.type === 'radio') {
+      el.checked = false;
+     } else {
+      el.value = '';
+     }
+     });
+
+      // Clear common output areas inside this module
+      root.querySelectorAll('#vehicleCgResult, #result, #results, #calcOutput').forEach(el => {
+       el.innerHTML = '';
+     });
     }
   </script>
 </body>
