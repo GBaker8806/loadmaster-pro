@@ -39,7 +39,7 @@
   </select>
 
   <button onclick="calculateWinching()">Calculate Required Snatch Blocks</button>
-  <button class="btn-danger" onclick="clearAll()">Clear All</button>
+  <button class="btn-danger" onclick="clearAllWinching()">Clear All</button>
   <div id="winchResult"></div>
 
   <script>
@@ -121,6 +121,18 @@
       }
 
       out.innerHTML = text;
+    }
+    
+      function clearAllWinching(){
+      const weight = document.getElementById('winchWeight');
+      const ramp   = document.getElementById('winchRamp');
+      const surf   = document.getElementById('winchSurface');
+      const out    = document.getElementById('winchResult');
+
+     if (weight) weight.value = '';
+     if (ramp)   ramp.selectedIndex = 0;
+     if (surf)   surf.selectedIndex = 0;
+     if (out)    out.innerHTML = '';
     }
   </script>
  </body>
