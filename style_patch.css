@@ -1,0 +1,14 @@
+/* Loadmaster Pro UI spacing fixes */
+textarea {
+  margin-bottom: 0.75rem; /* breathing room before buttons */
+}
+
+.row {
+  gap: 0.75rem; /* more space between inline buttons */
+  margin-top: 0.5rem; /* extra space above button rows */
+}
+
+.row button {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
